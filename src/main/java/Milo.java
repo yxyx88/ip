@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Milo {
     private static String LINE = "____________________________________________________________";
@@ -8,20 +9,22 @@ public class Milo {
             + "| |\\/| | | |/ _ \\ \n"
             + "| |  | | | | (_) |\n"
             + "|_|  |_|_|_|\\___/\n";
-    private static String activities[] = new String[100];
-    private static int counter = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>(100);
 
     public static void printResponse(String string) {
         System.out.println(LINE + "\n" + "    " + string + "\n" + LINE + "\n");
     }
 
     public static void printList() {
-        System.out.println(LINE);
-        for (int i = 0; i < counter; ++i) {
-            String output = String.format("    %d. %s", i + 1, activities[i]);
-            System.out.println(output);
+        String message = "Here is your to-do list:";
+        for (int i = 0; i < tasks.size(); ++i) {
+            String nextLine = String.format("    %d. %s", i + 1, tasks.get(i));
+            message = message + "\n" + nextLine;
         }
-        System.out.println(LINE);
+        printResponse(message);
+    }
+
+        }
     }
 
     public static void main(String[] args) {
@@ -43,8 +46,8 @@ public class Milo {
             } else if (input.equals("list")) {
                 printList();
             } else {
-                activities[counter] = input;
-                ++counter;
+                Task task = new Task(input);
+                tasks.add(task);
                 printResponse("added: " + input);
             }
         }
