@@ -8,9 +8,20 @@ public class Milo {
             + "| |\\/| | | |/ _ \\ \n"
             + "| |  | | | | (_) |\n"
             + "|_|  |_|_|_|\\___/\n";
+    private static String activities[] = new String[100];
+    private static int counter = 0;
 
     public static void printResponse(String string) {
         System.out.println(LINE + "\n" + "    " + string + "\n" + LINE + "\n");
+    }
+
+    public static void printList() {
+        System.out.println(LINE);
+        for (int i = 0; i < counter; ++i) {
+            String output = String.format("    %d. %s", i + 1, activities[i]);
+            System.out.println(output);
+        }
+        System.out.println(LINE);
     }
 
     public static void main(String[] args) {
@@ -29,8 +40,12 @@ public class Milo {
             if (input.equals("bye")) {
                 printResponse("Bye bye. Hope to see you soon!");
                 break;
+            } else if (input.equals("list")) {
+                printList();
             } else {
-                printResponse(input);
+                activities[counter] = input;
+                ++counter;
+                printResponse("added: " + input);
             }
         }
 
