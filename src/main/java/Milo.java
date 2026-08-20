@@ -24,6 +24,30 @@ public class Milo {
         printResponse(message);
     }
 
+    public static void handleMark(String s, boolean markDone) {
+        int idx;
+        try {
+            idx = Integer.parseInt(s) - 1;
+        } catch (NumberFormatException e) {
+            printResponse("Give me a valid task number!");
+            return;
+        }
+
+        if (idx < 0) {
+            printResponse("There can't be a negative task number!");
+        } else if (idx >= tasks.size()) {
+            printResponse("You don't even have that many tasks!");
+        } else {
+            Task task = tasks.get(idx);
+            if (markDone) {
+                task.markAsDone();
+                printResponse("Yay! I've marked this task as done!\n" +
+                        "      " + task.toString());
+            } else {
+                task.markAsUndone();
+                printResponse("Hmm.... Why was it marked as done in the first place?\n" +
+                        "      " + task.toString());
+            }
         }
     }
 
@@ -45,6 +69,10 @@ public class Milo {
                 break;
             } else if (input.equals("list")) {
                 printList();
+            } else if (input.startsWith("mark ")) {
+                handleMark(input.substring(5), true);
+            } else if (input.startsWith("unmark ")) {
+                handleMark(input.substring(7), false);
             } else {
                 Task task = new Task(input);
                 tasks.add(task);
