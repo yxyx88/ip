@@ -56,7 +56,7 @@ public class Milo {
 
             String inputs[] = s.substring(8).split("/");
 
-            if (inputs[0].equals("")) {
+            if (inputs[0].trim().equals("")) {
                 throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 2){
                 throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
@@ -75,7 +75,7 @@ public class Milo {
 
             String inputs[] = s.substring(5).split("/");
 
-            if (inputs[0].equals("")) {
+            if (inputs[0].trim().equals("")) {
                 throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 3) {
                 throw new MiloException("Erm... An even has to start and end...");
@@ -95,20 +95,13 @@ public class Milo {
         printTaskAdded(task);
     }
 
-    public static void handleMark(String s, boolean markDone) throws MiloException {
-        if (!s.startsWith(" ")) {
+    public static void handleMark(String s, boolean markDone) throws MiloException, NumberFormatException {
+        s = s.trim();
+        if (s.equals("")) {
             throw new MiloException("Am I supposed to read your mind?");
         }
 
-        s = s.trim();
-        int idx;
-
-        try {
-            idx = Integer.parseInt(s) - 1;
-        } catch (NumberFormatException e) {
-            printResponse("Give me a valid task number!");
-            return;
-        }
+        int idx = Integer.parseInt(s) - 1;
 
         if (idx < 0) {
             throw new MiloException("There can't be a negative task number!");
@@ -156,6 +149,8 @@ public class Milo {
                 }
             } catch (MiloException e) {
                 printResponse(e.getMessage());
+            } catch (NumberFormatException e) {
+                printResponse("Give me a valid task number!");
             }
         }
 
