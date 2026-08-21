@@ -33,21 +33,51 @@ public class Milo {
         printResponse(message);
     }
 
-    // assume all inputs are correct and follow the proper format
-    public static void handleTask(String s) {
+    public static void handleTask(String s) throws MiloException {
         Task task;
+
         if (s.startsWith("todo ")) {
-            task = new ToDo(s.substring(5).trim());
+            String taskDescription = s.substring(4).trim();
+
+            if (taskDescription.equals("")) {
+                throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
+            }
+
+            task = new ToDo(taskDescription);
+
         } else if (s.startsWith("deadline ")) {
-            String inputs[] = s.substring(9).split("/");
-            inputs[1] = inputs[1].substring(3);
-            task = new Deadline(inputs[0].trim(), inputs[1].trim());
+            String inputs[] = s.substring(8).split("/");
+
+            if (inputs[0].equals("")) {
+                throw new MiloException("An empty deadline? What is that for? Doomscrolling?");
+            } else if (inputs.length != 2){
+                throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
+            } else if (!inputs[1].startsWith("by ")) {
+                throw new MiloException("Follow the format for deadlines!");
+            }
+
+            String taskDescription = inputs[0].trim();
+            String date = inputs[1].substring(3).trim();
+            task = new Deadline(taskDescription, date);
+
+        } else if (s.startsWith("event ")){
+            String inputs[] = s.substring(5).split("/");
+
+            if (inputs[0].equals("")) {
+                throw new MiloException("An empty event? What is that for? Doomscrolling?");
+            } else if (inputs.length != 3) {
+                throw new MiloException("Erm... An even has to start and end...");
+            } else if (!inputs[1].startsWith("from ") || !inputs[2].startsWith("to ")) {
+                throw new MiloException("Follow the format for events!");
+            }
+
+            String taskDescription = inputs[0].trim();
+            String startDate = inputs[1].substring(5).trim();
+            String endDate = inputs[2].substring(3);
+            task = new Event(taskDescription, startDate, endDate);
+
         } else {
-            // event case
-            String inputs[] = s.substring(6).split("/");
-            inputs[1] = inputs[1].substring(5);
-            inputs[2] = inputs[2].substring(3);
-            task = new Event(inputs[0].trim(), inputs[1].trim(), inputs[2].trim());
+            throw new MiloException("Erm... I don't know what you mean...");
         }
         tasks.add(task);
         printTaskAdded(task);
@@ -104,7 +134,11 @@ public class Milo {
             } else if (input.startsWith("unmark ")) {
                 handleMark(input.substring(7), false);
             } else {
-                handleTask(input);
+                try {
+                    handleTask(input);
+                } catch (MiloException e) {
+                    printResponse(e.getMessage());
+                }
             }
         }
 
