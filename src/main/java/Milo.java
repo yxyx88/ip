@@ -135,22 +135,21 @@ public class Milo {
         while (true) {
             String input = scanner.nextLine();
 
-            // assume correct inputs/ commands
-            if (input.equals("bye")) {
-                printResponse("Bye bye. Hope to see you soon!");
-                break;
-            } else if (input.equals("list")) {
-                printList();
-            } else if (input.startsWith("mark ")) {
-                handleMark(input.substring(5), true);
-            } else if (input.startsWith("unmark ")) {
-                handleMark(input.substring(7), false);
-            } else {
-                try {
+            try {
+                if (input.equals("bye")) {
+                    printResponse("Bye bye. Hope to see you soon!");
+                    break;
+                } else if (input.equals("list")) {
+                    printList();
+                } else if (input.startsWith("mark ")) {
+                    handleMark(input.substring(5), true);
+                } else if (input.startsWith("unmark ")) {
+                    handleMark(input.substring(7), false);
+                } else {
                     handleTask(input);
-                } catch (MiloException e) {
-                    printResponse(e.getMessage());
                 }
+            } catch (MiloException e) {
+                printResponse(e.getMessage());
             }
         }
 
