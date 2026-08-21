@@ -95,7 +95,7 @@ public class Milo {
         printTaskAdded(task);
     }
 
-    public static void handleMark(String s, boolean markDone) {
+    public static void handleMark(String s, boolean markDone) throws MiloException {
         int idx;
         try {
             idx = Integer.parseInt(s) - 1;
@@ -105,9 +105,9 @@ public class Milo {
         }
 
         if (idx < 0) {
-            printResponse("There can't be a negative task number!");
+            throw new MiloException("There can't be a negative task number!");
         } else if (idx >= tasks.size()) {
-            printResponse("You don't even have that many tasks!");
+            throw new MiloException("You don't even have that many tasks!");
         } else {
             Task task = tasks.get(idx);
             if (markDone) {
