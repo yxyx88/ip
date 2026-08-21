@@ -96,7 +96,13 @@ public class Milo {
     }
 
     public static void handleMark(String s, boolean markDone) throws MiloException {
+        if (!s.startsWith(" ")) {
+            throw new MiloException("Am I supposed to read your mind?");
+        }
+
+        s = s.trim();
         int idx;
+
         try {
             idx = Integer.parseInt(s) - 1;
         } catch (NumberFormatException e) {
@@ -141,10 +147,10 @@ public class Milo {
                     break;
                 } else if (input.equals("list")) {
                     printList();
-                } else if (input.startsWith("mark ")) {
-                    handleMark(input.substring(5), true);
-                } else if (input.startsWith("unmark ")) {
-                    handleMark(input.substring(7), false);
+                } else if (input.startsWith("mark")) {
+                    handleMark(input.substring(4), true);
+                } else if (input.startsWith("unmark")) {
+                    handleMark(input.substring(6), false);
                 } else {
                     handleTask(input);
                 }
