@@ -121,6 +121,28 @@ public class Milo {
         }
     }
 
+    public static void handleDeletion(String s) throws MiloException, NumberFormatException {
+        s = s.trim();
+        if (s.equals("")) {
+            throw new MiloException("Ok, deleting nothing!");
+        }
+
+        int idx = Integer.parseInt(s) - 1;
+
+        if (idx < 0) {
+            throw new MiloException("There can't be a negative task number!");
+        } else if (idx >= tasks.size()) {
+            throw new MiloException("You don't even have that many tasks!");
+        } else {
+            Task task = tasks.get(idx);
+            tasks.remove(idx);
+            String message = String.format("Ok, I've removed this task:\n", idx);
+            message += String.format("      %s\n", task.toString());
+            message += String.format("    You've got %d tasks in your list!", tasks.size());
+            printResponse(message);
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println(LINE);
         System.out.println(BANNER);
@@ -144,6 +166,8 @@ public class Milo {
                     handleMark(input.substring(4), true);
                 } else if (input.startsWith("unmark")) {
                     handleMark(input.substring(6), false);
+                } else if (input.startsWith("delete")) {
+                    handleDeletion(input.substring(6));
                 } else {
                     handleTask(input);
                 }
