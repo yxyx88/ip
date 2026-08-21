@@ -36,7 +36,11 @@ public class Milo {
     public static void handleTask(String s) throws MiloException {
         Task task;
 
-        if (s.startsWith("todo ")) {
+        if (s.startsWith("todo")) {
+            if (s.equals("todo")) {
+                throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
+            }
+
             String taskDescription = s.substring(4).trim();
 
             if (taskDescription.equals("")) {
@@ -45,11 +49,15 @@ public class Milo {
 
             task = new ToDo(taskDescription);
 
-        } else if (s.startsWith("deadline ")) {
+        } else if (s.startsWith("deadline")) {
+            if (s.equals("deadline")) {
+                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+            }
+
             String inputs[] = s.substring(8).split("/");
 
             if (inputs[0].equals("")) {
-                throw new MiloException("An empty deadline? What is that for? Doomscrolling?");
+                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 2){
                 throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
             } else if (!inputs[1].startsWith("by ")) {
@@ -60,11 +68,15 @@ public class Milo {
             String date = inputs[1].substring(3).trim();
             task = new Deadline(taskDescription, date);
 
-        } else if (s.startsWith("event ")){
+        } else if (s.startsWith("event")) {
+            if (s.equals("event")) {
+                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+            }
+
             String inputs[] = s.substring(5).split("/");
 
             if (inputs[0].equals("")) {
-                throw new MiloException("An empty event? What is that for? Doomscrolling?");
+                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 3) {
                 throw new MiloException("Erm... An even has to start and end...");
             } else if (!inputs[1].startsWith("from ") || !inputs[2].startsWith("to ")) {
