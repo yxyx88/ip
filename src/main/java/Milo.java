@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -22,6 +23,34 @@ public class Milo {
             message = message + "\n" + nextLine;
         }
         printResponse(message);
+    }
+
+    public static void printTaskAdded(Task task) {
+        String message = String.format(
+                "Ok, I've added the following task:\n" +
+                "      %s\n" +
+                "    You've got %d tasks in your list!", task.toString(), tasks.size());
+        printResponse(message);
+    }
+
+    // assume all inputs are correct and follow the proper format
+    public static void handleTask(String s) {
+        Task task;
+        if (s.startsWith("todo ")) {
+            task = new ToDo(s.substring(5).trim());
+        } else if (s.startsWith("deadline ")) {
+            String inputs[] = s.substring(9).split("/");
+            inputs[1] = inputs[1].substring(3);
+            task = new Deadline(inputs[0].trim(), inputs[1].trim());
+        } else {
+            // event case
+            String inputs[] = s.substring(6).split("/");
+            inputs[1] = inputs[1].substring(5);
+            inputs[2] = inputs[2].substring(3);
+            task = new Event(inputs[0].trim(), inputs[1].trim(), inputs[2].trim());
+        }
+        tasks.add(task);
+        printTaskAdded(task);
     }
 
     public static void handleMark(String s, boolean markDone) {
@@ -64,6 +93,7 @@ public class Milo {
         while (true) {
             String input = scanner.nextLine();
 
+            // assume correct inputs/ commands
             if (input.equals("bye")) {
                 printResponse("Bye bye. Hope to see you soon!");
                 break;
@@ -74,9 +104,7 @@ public class Milo {
             } else if (input.startsWith("unmark ")) {
                 handleMark(input.substring(7), false);
             } else {
-                Task task = new Task(input);
-                tasks.add(task);
-                printResponse("added: " + input);
+                handleTask(input);
             }
         }
 
