@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.time.format.DateTimeParseException;
 
 public class Storage {
@@ -12,8 +11,8 @@ public class Storage {
     // instead of hardcoding "/".
     private static final String FILE_PATH = Paths.get(".", "data", "milo.txt").toString();
 
-    public static ArrayList<Task> loadTasks() throws MiloException {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public static TaskList loadTasks() throws MiloException {
+        TaskList tasks = new TaskList();
         File file = new File(FILE_PATH);
 
         if (!file.exists()) {
@@ -37,7 +36,7 @@ public class Storage {
         return tasks;
     }
 
-    public static void saveTasks(ArrayList<Task> tasks) throws MiloException {
+    public static void saveTasks(TaskList tasks) throws MiloException {
         try {
             File file = new File(FILE_PATH);
             File parentDir = file.getParentFile();
@@ -47,7 +46,7 @@ public class Storage {
 
             FileWriter fw = new FileWriter(file);
 
-            for (Task task : tasks) {
+            for (Task task : tasks.asList()) {
                 String line = task.storageString();
                 fw.write(line + System.lineSeparator());
             }
