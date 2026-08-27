@@ -6,7 +6,6 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
 
-/** Parses the date and time formats understood by Milo and formats them for users. */
 public final class DateTimeParser {
     private static final DateTimeFormatter ISO_DATE =
             DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
@@ -27,12 +26,6 @@ public final class DateTimeParser {
         // Utility class; do not instantiate.
     }
 
-    /**
-     * Parses a date, optionally followed by a 24-hour time (for example, 2019-10-15 1800).
-     * Date-only values are represented at midnight so that all task dates have one type.
-     *
-     * @throws DateTimeParseException if the value is not one of the supported formats
-     */
     public static LocalDateTime parse(String input) {
         String value = input == null ? "" : input.trim();
         if (value.isEmpty()) {
@@ -61,15 +54,13 @@ public final class DateTimeParser {
                 "Expected yyyy-MM-dd [HHmm] or d/M/yyyy [HHmm]", value, 0);
     }
 
-    /** Formats a date/time in a readable form for task listings. */
     public static String formatForDisplay(LocalDateTime dateTime) {
         // Date-only input is stored at midnight and is shown without a distracting time.
         return dateTime.toLocalTime().equals(LocalTime.MIDNIGHT)
                 ? DISPLAY_DATE.format(dateTime)
                 : DISPLAY_DATE_TIME.format(dateTime);
     }
-
-    /** Formats a date/time in a stable form for the task data file. */
+    
     public static String formatForStorage(LocalDateTime dateTime) {
         return STORAGE_DATE_TIME.format(dateTime);
     }

@@ -1,5 +1,8 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Milo {
     private static String LINE = "____________________________________________________________";
@@ -10,6 +13,10 @@ public class Milo {
             + "| |  | | | | (_) |\n"
             + "|_|  |_|_|_|\\___/\n";
     private static ArrayList<Task> tasks = new ArrayList<>(100);
+    private static final Pattern DEADLINE_PATTERN =
+            Pattern.compile("^deadline\\s+(.+?)\\s*/by\\s+(.+)$");
+    private static final Pattern EVENT_PATTERN =
+            Pattern.compile("^event\\s+(.+?)\\s*/from\\s+(.+?)\\s*/to\\s+(.+)$");
 
     public static void printResponse(String string) {
         System.out.println(LINE + "\n" + "    " + string + "\n" + LINE + "\n");
@@ -53,39 +60,62 @@ public class Milo {
                 throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             }
 
-            String inputs[] = s.substring(8).split("/");
-
-            if (inputs[0].trim().equals("")) {
-                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
-            } else if (inputs.length != 2){
-                throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
-            } else if (!inputs[1].trim().startsWith("by ")) {
-                throw new MiloException("Follow the format for deadlines!");
+            Matcher matcher = DEADLINE_PATTERN.matcher(s);
+            if (!matcher.matches()) {
+                String remainder = s.substring(8).trim();
+                if (remainder.isEmpty()) {
+                    throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+                }
+                if (!remainder.contains("/")) {
+                    // Keep the original message for a description with no deadline part.
+                    throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
+                }
+                if (!remainder.contains("/by")) {
+                    throw new MiloException("Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
+                }
+                throw invalidDateMessage();
             }
 
-            String taskDescription = inputs[0].trim();
-            String date = inputs[1].trim().substring(3);
-            task = new Deadline(taskDescription, date);
+            String taskDescription = matcher.group(1).trim();
+            String date = matcher.group(2).trim();
+            if (taskDescription.equals("")) {
+                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+            }
+            try {
+                task = new Deadline(taskDescription, date);
+            } catch (DateTimeParseException e) {
+                throw invalidDateMessage();
+            }
 
         } else if (s.startsWith("event")) {
             if (s.equals("event")) {
                 throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             }
 
-            String inputs[] = s.substring(5).split("/");
-
-            if (inputs[0].trim().equals("")) {
-                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
-            } else if (inputs.length != 3) {
-                throw new MiloException("Erm... An even has to start and end...");
-            } else if (!inputs[1].trim().startsWith("from ") || !inputs[2].trim().startsWith("to ")) {
-                throw new MiloException("Follow the format for events!");
+            Matcher matcher = EVENT_PATTERN.matcher(s);
+            if (!matcher.matches()) {
+                String remainder = s.substring(5).trim();
+                if (remainder.isEmpty()) {
+                    throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+                }
+                if (!remainder.contains("/from") || !remainder.contains("/to")) {
+                    // Keep the original message when the event has no complete range.
+                    throw new MiloException("Erm... An even has to start and end...");
+                }
+                throw new MiloException("Follow the format for events: event description /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
             }
 
-            String taskDescription = inputs[0].trim();
-            String startDate = inputs[1].trim().substring(5);
-            String endDate = inputs[2].trim().substring(3);
-            task = new Event(taskDescription, startDate, endDate);
+            String taskDescription = matcher.group(1).trim();
+            String startDate = matcher.group(2).trim();
+            String endDate = matcher.group(3).trim();
+            if (taskDescription.equals("")) {
+                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+            }
+            try {
+                task = new Event(taskDescription, startDate, endDate);
+            } catch (DateTimeParseException e) {
+                throw invalidDateMessage();
+            }
 
         } else {
             throw new MiloException("Erm... I don't know what you mean...");
@@ -93,6 +123,10 @@ public class Milo {
         tasks.add(task);
         Storage.saveTasks(tasks);
         printTaskAdded(task);
+    }
+
+    private static MiloException invalidDateMessage() {
+        return new MiloException("I couldn't understand that date. Use yyyy-MM-dd or yyyy-MM-dd HHmm (for example, 2019-10-15 1800), or d/M/yyyy HHmm.");
     }
 
     public static void handleMark(String s, boolean markDone) throws MiloException, NumberFormatException {
