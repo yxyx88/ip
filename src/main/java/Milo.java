@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -60,12 +59,12 @@ public class Milo {
                 throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 2){
                 throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
-            } else if (!inputs[1].startsWith("by ")) {
+            } else if (!inputs[1].trim().startsWith("by ")) {
                 throw new MiloException("Follow the format for deadlines!");
             }
 
             String taskDescription = inputs[0].trim();
-            String date = inputs[1].substring(3).trim();
+            String date = inputs[1].trim().substring(3);
             task = new Deadline(taskDescription, date);
 
         } else if (s.startsWith("event")) {
@@ -79,19 +78,20 @@ public class Milo {
                 throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             } else if (inputs.length != 3) {
                 throw new MiloException("Erm... An even has to start and end...");
-            } else if (!inputs[1].startsWith("from ") || !inputs[2].startsWith("to ")) {
+            } else if (!inputs[1].trim().startsWith("from ") || !inputs[2].trim().startsWith("to ")) {
                 throw new MiloException("Follow the format for events!");
             }
 
             String taskDescription = inputs[0].trim();
-            String startDate = inputs[1].substring(5).trim();
-            String endDate = inputs[2].substring(3);
+            String startDate = inputs[1].trim().substring(5);
+            String endDate = inputs[2].trim().substring(3);
             task = new Event(taskDescription, startDate, endDate);
 
         } else {
             throw new MiloException("Erm... I don't know what you mean...");
         }
         tasks.add(task);
+        Storage.saveTasks(tasks);
         printTaskAdded(task);
     }
 
@@ -111,10 +111,12 @@ public class Milo {
             Task task = tasks.get(idx);
             if (markDone) {
                 task.markAsDone();
+                Storage.saveTasks(tasks);
                 printResponse("Yay! I've marked this task as done!\n" +
                         "      " + task.toString());
             } else {
                 task.markAsUndone();
+                Storage.saveTasks(tasks);
                 printResponse("Hmm.... Why was it marked as done in the first place?\n" +
                         "      " + task.toString());
             }
@@ -123,29 +125,46 @@ public class Milo {
 
     public static void handleDeletion(String s) throws MiloException, NumberFormatException {
         s = s.trim();
+        String message;
         if (s.equals("")) {
             throw new MiloException("Ok, deleting nothing!");
-        }
-
-        int idx = Integer.parseInt(s) - 1;
-
-        if (idx < 0) {
-            throw new MiloException("There can't be a negative task number!");
-        } else if (idx >= tasks.size()) {
-            throw new MiloException("You don't even have that many tasks!");
+        } else if (s.equals("all")) {
+            tasks = new ArrayList<>();
+            Storage.saveTasks(tasks);
+            message = String.format("POOOOOFFF\n");
+            message += "    Your to-do list is gone! Sure hope you meant that!";
         } else {
-            Task task = tasks.get(idx);
-            tasks.remove(idx);
-            String message = String.format("Ok, I've removed this task:\n", idx);
-            message += String.format("      %s\n", task.toString());
-            message += String.format("    You've got %d tasks in your list!", tasks.size());
-            printResponse(message);
+            int idx = Integer.parseInt(s) - 1;
+
+            if (idx < 0) {
+                throw new MiloException("There can't be a negative task number!");
+            } else if (idx >= tasks.size()) {
+                throw new MiloException("You don't even have that many tasks!");
+            } else {
+                Task task = tasks.get(idx);
+                tasks.remove(idx);
+                Storage.saveTasks(tasks);
+                message = String.format("Ok, I've removed this task:\n", idx);
+                message += String.format("      %s\n", task.toString());
+                message += String.format("    You've got %d tasks in your list!", tasks.size());
+            }
         }
+        printResponse(message);
     }
 
     public static void main(String[] args) {
         System.out.println(LINE);
         System.out.println(BANNER);
+
+        try {
+            tasks = Storage.loadTasks();
+            System.out.println(LINE);
+            System.out.println("Retrieving old tasks...");
+            System.out.println(LINE);
+        } catch (MiloException e) {
+            System.out.println(e.getMessage());
+        }
+
         System.out.println("Hey there! My name is Milo.\n"
                 + "How can I help you today?\n"
                 + LINE

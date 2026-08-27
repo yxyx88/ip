@@ -9,6 +9,11 @@ public class Event extends Task {
     }
 
     @Override
+    public String storageString() {
+        return String.format("E | %s | %s | %s", super.storageString(), this.startDate, this.endDate);
+    }
+
+    @Override
     public String toString() {
         return String.format("[E] %s (from: %s to: %s)", super.toString(), this.startDate, this.endDate);
     }
