@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.time.format.DateTimeParseException;
 
 public class Storage {
     // Built with Paths.get so the separator is correct on Windows, macOS, and Linux
@@ -85,7 +86,7 @@ public class Storage {
                 System.out.println("Hmm... That's wierd... There's an unrecognised task-type, I'm just gna skip it.");
                 return null;
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException e) {
             System.out.println("Hmm... That's wierd... There's a corrupted line, I'm just gna skip it.");
             return null;
         }
