@@ -10,16 +10,25 @@ import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** Converts user-entered task commands into task objects. */
 public final class Parser {
     private static final Pattern DEADLINE_PATTERN =
             Pattern.compile("^deadline\\s+(.+?)\\s*/by\\s+(.+)$");
     private static final Pattern EVENT_PATTERN =
             Pattern.compile("^event\\s+(.+?)\\s*/from\\s+(.+?)\\s*/to\\s+(.+)$");
 
+    /** Prevents construction of this utility class. */
     private Parser() {
         // Utility class; do not instantiate.
     }
 
+    /**
+     * Parses a todo, deadline, or event command.
+     *
+     * @param s complete user command
+     * @return the task represented by the command
+     * @throws MiloException if the command is empty, malformed, or has invalid dates
+     */
     public static Task parseTask(String s) throws MiloException {
         if (s.startsWith("todo")) {
             if (s.equals("todo")) {
@@ -98,6 +107,7 @@ public final class Parser {
         throw new MiloException("Erm... I don't know what you mean...");
     }
 
+    /** Creates the standard message shown when a task date cannot be parsed. */
     private static MiloException invalidDateMessage() {
         return new MiloException("I couldn't understand that date. Use yyyy-MM-dd or yyyy-MM-dd HHmm (for example, 2019-10-15 1800), or d/M/yyyy HHmm.");
     }

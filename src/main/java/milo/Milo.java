@@ -6,22 +6,27 @@ import milo.task.TaskList;
 import milo.parser.Parser;
 import milo.storage.Storage;
 
+/** Runs Milo and coordinates user interaction, parsing, task management, and storage. */
 public class Milo {
     private static TaskList tasks = new TaskList();
     private static Ui ui = new Ui();
 
+    /** Displays a message using Milo's standard response layout. */
     public static void printResponse(String string) {
         ui.showResponse(string);
     }
 
+    /** Displays all tasks currently in the task list. */
     public static void printList() {
         ui.showList(tasks);
     }
 
+    /** Displays confirmation after a task has been added. */
     public static void printTaskAdded(Task task) {
         ui.showTaskAdded(task, tasks.size());
     }
 
+    /** Parses, stores, persists, and reports a new task command. */
     public static void handleTask(String s) throws MiloException {
         Task task = Parser.parseTask(s);
         tasks.add(task);
@@ -29,6 +34,7 @@ public class Milo {
         printTaskAdded(task);
     }
 
+    /** Marks or unmarks the task selected by a user-provided one-based index. */
     public static void handleMark(String s, boolean markDone) throws MiloException, NumberFormatException {
         s = s.trim();
         if (s.equals("")) {
@@ -55,6 +61,7 @@ public class Milo {
         }
     }
 
+    /** Deletes one task, or all tasks when the argument is {@code all}. */
     public static void handleDeletion(String s) throws MiloException, NumberFormatException {
         s = s.trim();
         String message;
@@ -84,6 +91,7 @@ public class Milo {
         ui.showTasksDeleted(message);
     }
 
+    /** Starts Milo's input loop. */
     public static void main(String[] args) {
         ui.showWelcome();
 
