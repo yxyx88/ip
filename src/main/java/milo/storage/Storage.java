@@ -15,11 +15,18 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.time.format.DateTimeParseException;
 
+/** Loads tasks from and saves tasks to Milo's data file. */
 public class Storage {
     // Built with Paths.get so the separator is correct on Windows, macOS, and Linux
     // instead of hardcoding "/".
     private static final String FILE_PATH = Paths.get(".", "data", "milo.txt").toString();
 
+    /**
+     * Loads all valid tasks from the data file.
+     *
+     * @return the loaded tasks, or an empty list when no data file exists
+     * @throws MiloException if the data file cannot be accessed
+     */
     public static TaskList loadTasks() throws MiloException {
         TaskList tasks = new TaskList();
         File file = new File(FILE_PATH);
@@ -45,6 +52,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves all tasks to the data file.
+     *
+     * @param tasks tasks to persist
+     * @throws MiloException if the data file cannot be written
+     */
     public static void saveTasks(TaskList tasks) throws MiloException {
         try {
             File file = new File(FILE_PATH);
@@ -66,6 +79,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Restores one task from its pipe-delimited storage representation.
+     *
+     * @param input serialized task line
+     * @return the restored task, or {@code null} for a blank or corrupted line
+     */
     public static Task restoreTask(String input) {
         if (input == null || input.trim().isEmpty()) {
             return null;
