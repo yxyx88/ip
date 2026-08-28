@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+/** Tests task-list storage and search operations. */
 public class TaskListTest {
 
     @Test
@@ -42,5 +43,30 @@ public class TaskListTest {
 
         assertEquals(1, tasks.asList().size());
         assertThrows(UnsupportedOperationException.class, () -> tasks.asList().clear());
+    }
+
+    /** Verifies matching ignores case and retains the original task order. */
+    @Test
+    public void find_keywordDifferentCase_expectedMatchingTasksInOriginalOrder() {
+        Task first = new ToDo("read book");
+        Task second = new Deadline("return book", "2019-06-06");
+        Task third = new ToDo("buy milk");
+        TaskList tasks = new TaskList(List.of(first, second, third));
+
+        TaskList matches = tasks.find("BOOK");
+
+        assertEquals(2, matches.size());
+        assertEquals(first, matches.get(0));
+        assertEquals(second, matches.get(1));
+    }
+
+    /** Verifies a keyword absent from every description produces no results. */
+    @Test
+    public void find_keywordWithNoMatches_expectedEmptyTaskList() {
+        TaskList tasks = new TaskList(List.of(new ToDo("read book"), new ToDo("buy milk")));
+
+        TaskList matches = tasks.find("holiday");
+
+        assertEquals(0, matches.size());
     }
 }

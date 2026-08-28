@@ -88,6 +88,20 @@ public class Ui {
         showResponse("Bye bye. Hope to see you soon!");
     }
 
+    /** Displays matching tasks or a message when no tasks match. */
+    public void showSearchResults(TaskList tasks) {
+        String message = "";
+        if (tasks.size() == 0) {
+            message = "You don't have any matching tasks :(";
+        } else {
+            message = "Here are the tasks I found:";
+            for (int i = 0; i < tasks.size(); ++i) {
+                message += String.format("\n    %d. %s", i + 1, tasks.get(i));
+            }
+        }
+        showResponse(message);
+    }
+
     /** Closes the console input scanner. */
     public void close() {
         scanner.close();

@@ -1,5 +1,7 @@
 package milo.task;
 
+import java.util.Locale;
+
 /** Represents a task description and its completed/not-completed state. */
 public abstract class Task {
     /** Text describing the work to be done. */
@@ -21,6 +23,17 @@ public abstract class Task {
     /** Marks this task as incomplete. */
     public void markAsUndone() {
         this.isDone = false;
+    }
+
+    /**
+     * Checks whether this task description contains a keyword, ignoring case.
+     *
+     * @param keyword text to search for
+     * @return {@code true} when the description contains the keyword
+     */
+    public boolean containsKeyword(String keyword) {
+        return description.toLowerCase(Locale.ROOT)
+                .contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /** Returns the common task data used by persistent storage. */
