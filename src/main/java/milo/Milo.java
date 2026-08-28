@@ -1,25 +1,25 @@
 package milo;
 
-import milo.ui.Ui;
-import milo.task.Task;
-import milo.task.TaskList;
 import milo.parser.Parser;
 import milo.storage.Storage;
+import milo.task.Task;
+import milo.task.TaskList;
+import milo.ui.Ui;
 
 public class Milo {
     private static TaskList tasks = new TaskList();
-    private static Ui ui = new Ui();
+    private static final Ui UI = new Ui();
 
     public static void printResponse(String string) {
-        ui.showResponse(string);
+        UI.showResponse(string);
     }
 
     public static void printList() {
-        ui.showList(tasks);
+        UI.showList(tasks);
     }
 
     public static void printTaskAdded(Task task) {
-        ui.showTaskAdded(task, tasks.size());
+        UI.showTaskAdded(task, tasks.size());
     }
 
     public static void handleTask(String s) throws MiloException {
@@ -31,7 +31,7 @@ public class Milo {
 
     public static void handleMark(String s, boolean markDone) throws MiloException, NumberFormatException {
         s = s.trim();
-        if (s.equals("")) {
+        if (s.isEmpty()) {
             throw new MiloException("Am I supposed to read your mind?");
         }
 
@@ -46,11 +46,11 @@ public class Milo {
             if (markDone) {
                 task.markAsDone();
                 Storage.saveTasks(tasks);
-                ui.showTaskMarked(task, true);
+                UI.showTaskMarked(task, true);
             } else {
                 task.markAsUndone();
                 Storage.saveTasks(tasks);
-                ui.showTaskMarked(task, false);
+                UI.showTaskMarked(task, false);
             }
         }
     }
@@ -58,7 +58,7 @@ public class Milo {
     public static void handleDeletion(String s) throws MiloException, NumberFormatException {
         s = s.trim();
         String message;
-        if (s.equals("")) {
+        if (s.isEmpty()) {
             throw new MiloException("Ok, deleting nothing!");
         } else if (s.equals("all")) {
             tasks.clear();
@@ -81,27 +81,27 @@ public class Milo {
                 message += String.format("    You've got %d tasks in your list!", tasks.size());
             }
         }
-        ui.showTasksDeleted(message);
+        UI.showTasksDeleted(message);
     }
 
     public static void main(String[] args) {
-        ui.showWelcome();
+        UI.showWelcome();
 
         try {
             tasks = Storage.loadTasks();
-            ui.showLoading();
+            UI.showLoading();
         } catch (MiloException e) {
             System.out.println(e.getMessage());
         }
 
-        ui.showGreeting();
+        UI.showGreeting();
 
         while (true) {
-            String input = ui.readCommand();
+            String input = UI.readCommand();
 
             try {
                 if (input.equals("bye")) {
-                    ui.showGoodbye();
+                    UI.showGoodbye();
                     break;
                 } else if (input.equals("list")) {
                     printList();
@@ -121,6 +121,6 @@ public class Milo {
             }
         }
 
-        ui.close();
+        UI.close();
     }
 }

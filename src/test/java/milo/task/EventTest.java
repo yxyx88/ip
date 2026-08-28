@@ -1,12 +1,12 @@
 package milo.task;
 
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+
+import org.junit.jupiter.api.Test;
 
 public class EventTest {
 
@@ -37,7 +37,7 @@ public class EventTest {
     }
 
     @Test
-    public void markAsDoneEvent_doneTask_expectedDoneMarkerInBothFormats() {
+    public void markAsDone_eventTask_expectedDoneMarkerInBothFormats() {
         Event event = new Event("study", LocalDateTime.of(2026, 1, 1, 9, 0),
                 LocalDateTime.of(2026, 1, 1, 10, 30));
         event.markAsDone();

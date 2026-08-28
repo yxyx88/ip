@@ -1,14 +1,14 @@
 package milo.parser;
 
-import milo.task.Task;
-import milo.task.ToDo;
-import milo.task.Deadline;
-import milo.task.Event;
-import milo.MiloException;
-
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import milo.MiloException;
+import milo.task.Deadline;
+import milo.task.Event;
+import milo.task.Task;
+import milo.task.ToDo;
 
 public final class Parser {
     private static final Pattern DEADLINE_PATTERN =
@@ -27,7 +27,7 @@ public final class Parser {
             }
 
             String taskDescription = s.substring(4).trim();
-            if (taskDescription.equals("")) {
+            if (taskDescription.isEmpty()) {
                 throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
             }
             return new ToDo(taskDescription);
@@ -48,14 +48,15 @@ public final class Parser {
                     throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
                 }
                 if (!remainder.contains("/by")) {
-                    throw new MiloException("Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
+                    throw new MiloException(
+                            "Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
                 }
                 throw invalidDateMessage();
             }
 
             String taskDescription = matcher.group(1).trim();
             String date = matcher.group(2).trim();
-            if (taskDescription.equals("")) {
+            if (taskDescription.isEmpty()) {
                 throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             }
             try {
@@ -79,13 +80,15 @@ public final class Parser {
                 if (!remainder.contains("/from") || !remainder.contains("/to")) {
                     throw new MiloException("Erm... An even has to start and end...");
                 }
-                throw new MiloException("Follow the format for events: event description /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
+                throw new MiloException(
+                        "Follow the format for events: event description /from yyyy-MM-dd HHmm "
+                                + "/to yyyy-MM-dd HHmm");
             }
 
             String taskDescription = matcher.group(1).trim();
             String startDate = matcher.group(2).trim();
             String endDate = matcher.group(3).trim();
-            if (taskDescription.equals("")) {
+            if (taskDescription.isEmpty()) {
                 throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             }
             try {
@@ -99,6 +102,8 @@ public final class Parser {
     }
 
     private static MiloException invalidDateMessage() {
-        return new MiloException("I couldn't understand that date. Use yyyy-MM-dd or yyyy-MM-dd HHmm (for example, 2019-10-15 1800), or d/M/yyyy HHmm.");
+        return new MiloException(
+                "I couldn't understand that date. Use yyyy-MM-dd or yyyy-MM-dd HHmm "
+                        + "(for example, 2019-10-15 1800), or d/M/yyyy HHmm.");
     }
 }

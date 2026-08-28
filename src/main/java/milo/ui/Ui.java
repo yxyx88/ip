@@ -1,9 +1,9 @@
 package milo.ui;
 
+import java.util.Scanner;
+
 import milo.task.Task;
 import milo.task.TaskList;
-
-import java.util.Scanner;
 
 public class Ui {
     private static final String LINE = "____________________________________________________________";

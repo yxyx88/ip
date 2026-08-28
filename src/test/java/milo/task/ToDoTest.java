@@ -1,8 +1,8 @@
 package milo.task;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class ToDoTest {
 
@@ -17,7 +17,7 @@ public class ToDoTest {
     }
 
     @Test
-    public void markAsDoneToDo_doneTask_expectedDoneMarkerInBothFormats() {
+    public void markAsDone_todoTask_expectedDoneMarkerInBothFormats() {
         ToDo todo = new ToDo("ABC");
         todo.markAsDone();
 

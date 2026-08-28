@@ -1,8 +1,8 @@
 package milo.task;
 
-import milo.parser.DateTimeParser;
-
 import java.time.LocalDateTime;
+
+import milo.parser.DateTimeParser;
 
 public class Event extends Task {
     private final LocalDateTime startDate;

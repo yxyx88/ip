@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
-    private ArrayList<Task> tasks;
+    private final ArrayList<Task> tasks;
 
     public TaskList() {
         this.tasks = new ArrayList<>(100);

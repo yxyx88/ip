@@ -1,12 +1,12 @@
 package milo.task;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 
 public class DeadlineTest {
 
@@ -18,7 +18,7 @@ public class DeadlineTest {
 
     @Test
     public void toString_deadlineAtNoon_expectedReadableDateTimeFormat() {
-        assertEquals("[D] [ ] DEF (by: Jan 01 2026, 12:00 PM)" , new Deadline("DEF",
+        assertEquals("[D] [ ] DEF (by: Jan 01 2026, 12:00 PM)", new Deadline("DEF",
                 LocalDateTime.of(2026, 1, 1, 12, 0)).toString());
     }
 
@@ -30,7 +30,7 @@ public class DeadlineTest {
     }
 
     @Test
-    public void markAsDoneDeadline_doneTask_expectedDoneMarker() {
+    public void markAsDone_deadlineTask_expectedDoneMarker() {
         Deadline deadline = new Deadline("ABC", LocalDateTime.of(2026, 8, 30, 18, 0));
         deadline.markAsDone();
 

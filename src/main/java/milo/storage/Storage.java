@@ -1,19 +1,19 @@
 package milo.storage;
 
-import milo.task.Task;
-import milo.task.ToDo;
-import milo.task.Deadline;
-import milo.task.Event;
-import milo.task.TaskList;
-import milo.MiloException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import java.time.format.DateTimeParseException;
+import java.util.Scanner;
+
+import milo.MiloException;
+import milo.task.Deadline;
+import milo.task.Event;
+import milo.task.Task;
+import milo.task.TaskList;
+import milo.task.ToDo;
 
 public class Storage {
     // Built with Paths.get so the separator is correct on Windows, macOS, and Linux

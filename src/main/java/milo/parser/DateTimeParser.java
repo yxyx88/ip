@@ -62,7 +62,7 @@ public final class DateTimeParser {
                 ? DISPLAY_DATE.format(dateTime)
                 : DISPLAY_DATE_TIME.format(dateTime);
     }
-    
+
     public static String formatForStorage(LocalDateTime dateTime) {
         return STORAGE_DATE_TIME.format(dateTime);
     }
