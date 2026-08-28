@@ -1,5 +1,7 @@
 package milo.task;
 
+import java.util.Locale;
+
 public abstract class Task {
     private String description;
     private boolean isDone;
@@ -15,6 +17,17 @@ public abstract class Task {
 
     public void markAsUndone() {
         this.isDone = false;
+    }
+
+    /**
+     * Checks whether this task description contains a keyword, ignoring case.
+     *
+     * @param keyword text to search for
+     * @return {@code true} when the description contains the keyword
+     */
+    public boolean containsKeyword(String keyword) {
+        return description.toLowerCase(Locale.ROOT)
+                .contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     public String storageString() {

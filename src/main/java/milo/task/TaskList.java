@@ -34,6 +34,24 @@ public class TaskList {
         return tasks.size();
     }
 
+    /**
+     * Returns the tasks whose descriptions contain the keyword, ignoring case.
+     *
+     * @param keyword text to search for
+     * @return matching tasks in their original order
+     */
+    public TaskList find(String keyword) {
+        TaskList searchResults = new TaskList();
+
+        for (Task task : this.tasks) {
+            if (task.containsKeyword(keyword)) {
+                searchResults.add(task);
+            }
+        }
+
+        return searchResults;
+    }
+
     public List<Task> asList() {
         return List.copyOf(tasks);
     }

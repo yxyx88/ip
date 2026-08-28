@@ -84,6 +84,18 @@ public class Milo {
         ui.showTasksDeleted(message);
     }
 
+    /** Searches task descriptions for a keyword and displays the matching tasks. */
+    public static void handleSearch(String keyword) throws MiloException {
+        keyword = keyword.trim();
+
+        if (keyword.isEmpty()) {
+            throw new MiloException("Hmm... where would this <blank> belong?");
+        }
+
+        TaskList searchResults = tasks.find(keyword);
+        ui.showSearchResults(searchResults);
+    }
+
     public static void main(String[] args) {
         ui.showWelcome();
 
@@ -111,6 +123,8 @@ public class Milo {
                     handleMark(input.substring(6), false);
                 } else if (input.startsWith("delete")) {
                     handleDeletion(input.substring(6));
+                } else if (input.startsWith("find")) {
+                    handleSearch(input.substring(4));
                 } else {
                     handleTask(input);
                 }
