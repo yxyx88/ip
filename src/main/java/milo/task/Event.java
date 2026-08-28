@@ -1,8 +1,8 @@
 package milo.task;
 
-import milo.parser.DateTimeParser;
-
 import java.time.LocalDateTime;
+
+import milo.parser.DateTimeParser;
 
 /** A task that occurs between a start date/time and an end date/time. */
 public class Event extends Task {

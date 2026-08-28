@@ -3,7 +3,7 @@ package milo.task;
 /** Represents a task description and its completed/not-completed state. */
 public abstract class Task {
     /** Text describing the work to be done. */
-    private String description;
+    private final String description;
     /** Whether this task has been completed. */
     private boolean isDone;
 

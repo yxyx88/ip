@@ -6,7 +6,7 @@ import java.util.List;
 /** Owns Milo's tasks and provides basic collection operations. */
 public class TaskList {
     /** Mutable collection of tasks in their display order. */
-    private ArrayList<Task> tasks;
+    private final ArrayList<Task> tasks;
 
     /** Creates an empty task list. */
     public TaskList() {

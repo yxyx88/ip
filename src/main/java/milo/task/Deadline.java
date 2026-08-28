@@ -1,8 +1,8 @@
 package milo.task;
 
-import milo.parser.DateTimeParser;
-
 import java.time.LocalDateTime;
+
+import milo.parser.DateTimeParser;
 
 /** A task that must be completed by a particular date and time. */
 public class Deadline extends Task {
