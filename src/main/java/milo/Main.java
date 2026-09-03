@@ -20,9 +20,7 @@ public class Main extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane anchorPane = fxmlLoader.load();
             Scene scene = new Scene(anchorPane);
-            scene.getStylesheets().add(Main.class.getResource("/view/main.css").toExternalForm());
             stage.setTitle("Milo");
-            stage.setResizable(false);
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setMilo(milo);
             stage.show();
