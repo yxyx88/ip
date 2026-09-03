@@ -1,32 +1,19 @@
 package milo;
 
-import milo.ui.Ui;
-
-/** Starts Milo and connects its user interface to its command logic. */
+/** Coordinates command processing for Milo's user interfaces. */
 public class Milo {
-    private static final Ui UI = new Ui();
+    private final Logic logic = new Logic();
 
-    /** Starts Milo's input loop. */
-    public static void main(String[] args) {
-        UI.showWelcome();
+    /** Returns Milo's reply for the supplied user command. */
+    public String getResponse(String input) {
+        return logic.execute(input);
+    }
 
-        Logic logic = new Logic();
+    /** Returns the first reply displayed when the GUI opens. */
+    public String getGreeting() {
         if (logic.hasLoadingError()) {
-            System.out.println(logic.getLoadingError());
-        } else {
-            UI.showLoading();
+            return logic.getLoadingError();
         }
-
-        UI.showGreeting();
-
-        while (true) {
-            String input = UI.readCommand();
-            UI.showResponse(logic.execute(input));
-            if (logic.isExitCommand(input)) {
-                break;
-            }
-        }
-
-        UI.close();
+        return "Hey there! My name is Milo.\nHow can I help you today?";
     }
 }

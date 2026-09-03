@@ -1,0 +1,37 @@
+.root {
+    -fx-font-family: "System";
+    -fx-background-color: #f5f7fa;
+}
+
+.scroll-pane {
+    -fx-background: #f5f7fa;
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.milo-dialog .label {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 12;
+    -fx-padding: 10;
+    -fx-text-fill: #1e293b;
+}
+
+.user-dialog .label {
+    -fx-background-color: #0f766e;
+    -fx-background-radius: 12;
+    -fx-padding: 10;
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-background-color: #0f766e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.text-field {
+    -fx-background-radius: 0;
+}
