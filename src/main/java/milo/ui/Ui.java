@@ -2,9 +2,6 @@ package milo.ui;
 
 import java.util.Scanner;
 
-import milo.task.Task;
-import milo.task.TaskList;
-
 /** Handles Milo's console input and output. */
 public class Ui {
     private static final String LINE = "____________________________________________________________";
@@ -51,55 +48,6 @@ public class Ui {
         System.out.println(LINE);
         System.out.println("    " + string);
         System.out.println(LINE);
-    }
-
-    /** Displays all tasks with one-based list numbers. */
-    public void showList(TaskList tasks) {
-        String message = "Here is your to-do list:";
-        for (int i = 0; i < tasks.size(); ++i) {
-            message += String.format("\n    %d. %s", i + 1, tasks.get(i));
-        }
-        showResponse(message);
-    }
-
-    /** Displays confirmation that a task was added. */
-    public void showTaskAdded(Task task, int taskCount) {
-        showResponse(String.format(
-                "Ok, I've added the following task:\n" +
-                "      %s\n" +
-                "    You've got %d tasks in your list!", task, taskCount));
-    }
-
-    /** Displays confirmation that a task was marked or unmarked. */
-    public void showTaskMarked(Task task, boolean markDone) {
-        String message = markDone
-                ? "Yay! I've marked this task as done!\n      " + task
-                : "Hmm.... Why was it marked as done in the first place?\n      " + task;
-        showResponse(message);
-    }
-
-    /** Displays confirmation after deleting tasks. */
-    public void showTasksDeleted(String message) {
-        showResponse(message);
-    }
-
-    /** Displays Milo's goodbye message. */
-    public void showGoodbye() {
-        showResponse("Bye bye. Hope to see you soon!");
-    }
-
-    /** Displays matching tasks or a message when no tasks match. */
-    public void showSearchResults(TaskList tasks) {
-        String message = "";
-        if (tasks.size() == 0) {
-            message = "You don't have any matching tasks :(";
-        } else {
-            message = "Here are the tasks I found:";
-            for (int i = 0; i < tasks.size(); ++i) {
-                message += String.format("\n    %d. %s", i + 1, tasks.get(i));
-            }
-        }
-        showResponse(message);
     }
 
     /** Closes the console input scanner. */

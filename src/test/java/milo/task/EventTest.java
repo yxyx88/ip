@@ -50,7 +50,7 @@ public class EventTest {
 
     @Test
     public void constructorWithDateStrings_invalidDate_expectedParseException() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Event("exam", "2019-02-30 0900", "2019-03-01 1100"));
+        assertThrows(DateTimeParseException.class, () ->
+                new Event("exam", "2019-02-30 0900", "2019-03-01 1100"));
     }
 }

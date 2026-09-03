@@ -40,7 +40,6 @@ public class DeadlineTest {
 
     @Test
     public void constructorWithDateString_invalidDate_expectedParseException() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Deadline("ABC", "31/02/2019 1800"));
+        assertThrows(DateTimeParseException.class, () -> new Deadline("ABC", "31/02/2019 1800"));
     }
 }

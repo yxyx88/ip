@@ -1,145 +1,29 @@
 package milo;
 
-import milo.parser.Parser;
-import milo.storage.Storage;
-import milo.task.Task;
-import milo.task.TaskList;
 import milo.ui.Ui;
 
-/** Runs Milo and coordinates user interaction, parsing, task management, and storage. */
+/** Starts Milo and connects its user interface to its command logic. */
 public class Milo {
-    private static TaskList tasks = new TaskList();
     private static final Ui UI = new Ui();
-
-    /** Displays a message using Milo's standard response layout. */
-    public static void printResponse(String string) {
-        UI.showResponse(string);
-    }
-
-    /** Displays all tasks currently in the task list. */
-    public static void printList() {
-        UI.showList(tasks);
-    }
-
-    /** Displays confirmation after a task has been added. */
-    public static void printTaskAdded(Task task) {
-        UI.showTaskAdded(task, tasks.size());
-    }
-
-    /** Parses, stores, persists, and reports a new task command. */
-    public static void handleTask(String s) throws MiloException {
-        Task task = Parser.parseTask(s);
-        tasks.add(task);
-        Storage.saveTasks(tasks);
-        printTaskAdded(task);
-    }
-
-    /** Marks or unmarks the task selected by a user-provided one-based index. */
-    public static void handleMark(String s, boolean markDone) throws MiloException, NumberFormatException {
-        s = s.trim();
-        if (s.isEmpty()) {
-            throw new MiloException("Am I supposed to read your mind?");
-        }
-
-        int idx = Integer.parseInt(s) - 1;
-
-        if (idx < 0) {
-            throw new MiloException("There can't be a negative task number!");
-        } else if (idx >= tasks.size()) {
-            throw new MiloException("You don't even have that many tasks!");
-        } else {
-            Task task = tasks.get(idx);
-            if (markDone) {
-                task.markAsDone();
-                Storage.saveTasks(tasks);
-                UI.showTaskMarked(task, true);
-            } else {
-                task.markAsUndone();
-                Storage.saveTasks(tasks);
-                UI.showTaskMarked(task, false);
-            }
-        }
-    }
-
-    /** Deletes one task, or all tasks when the argument is {@code all}. */
-    public static void handleDeletion(String s) throws MiloException, NumberFormatException {
-        s = s.trim();
-        String message;
-        if (s.isEmpty()) {
-            throw new MiloException("Ok, deleting nothing!");
-        } else if (s.equals("all")) {
-            tasks.clear();
-            Storage.saveTasks(tasks);
-            message = "POOOOOFFF\n";
-            message += "    Your to-do list is gone! Sure hope you meant that!";
-        } else {
-            int idx = Integer.parseInt(s) - 1;
-
-            if (idx < 0) {
-                throw new MiloException("There can't be a negative task number!");
-            } else if (idx >= tasks.size()) {
-                throw new MiloException("You don't even have that many tasks!");
-            } else {
-                Task task = tasks.get(idx);
-                tasks.remove(idx);
-                Storage.saveTasks(tasks);
-                message = "Ok, I've removed this task:\n";
-                message += String.format("      %s\n", task);
-                message += String.format("    You've got %d tasks in your list!", tasks.size());
-            }
-        }
-        UI.showTasksDeleted(message);
-    }
-
-    /** Searches task descriptions for a keyword and displays the matching tasks. */
-    public static void handleSearch(String keyword) throws MiloException {
-        keyword = keyword.trim();
-
-        if (keyword.isEmpty()) {
-            throw new MiloException("Hmm... where would this <blank> belong?");
-        }
-
-        TaskList searchResults = tasks.find(keyword);
-        UI.showSearchResults(searchResults);
-    }
 
     /** Starts Milo's input loop. */
     public static void main(String[] args) {
         UI.showWelcome();
 
-        try {
-            tasks = Storage.loadTasks();
+        Logic logic = new Logic();
+        if (logic.hasLoadingError()) {
+            System.out.println(logic.getLoadingError());
+        } else {
             UI.showLoading();
-        } catch (MiloException e) {
-            System.out.println(e.getMessage());
         }
 
         UI.showGreeting();
 
         while (true) {
             String input = UI.readCommand();
-
-            try {
-                if (input.equals("bye")) {
-                    UI.showGoodbye();
-                    break;
-                } else if (input.equals("list")) {
-                    printList();
-                } else if (input.startsWith("mark")) {
-                    handleMark(input.substring(4), true);
-                } else if (input.startsWith("unmark")) {
-                    handleMark(input.substring(6), false);
-                } else if (input.startsWith("delete")) {
-                    handleDeletion(input.substring(6));
-                } else if (input.startsWith("find")) {
-                    handleSearch(input.substring(4));
-                } else {
-                    handleTask(input);
-                }
-            } catch (MiloException e) {
-                printResponse(e.getMessage());
-            } catch (NumberFormatException e) {
-                printResponse("Give me a valid task number!");
+            UI.showResponse(logic.execute(input));
+            if (logic.isExitCommand(input)) {
+                break;
             }
         }
 

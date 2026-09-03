@@ -5,27 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import milo.task.TaskList;
-import milo.task.ToDo;
-
-/** Tests Milo's user-facing search output. */
+/** Tests Milo's console response formatting. */
 public class UiTest {
 
-    /** Verifies matching tasks are displayed with one-based numbering. */
+    /** Verifies that a supplied response is printed inside Milo's standard layout. */
     @Test
-    public void showSearchResults_matchingTasks_expectedNumberedOutput() {
+    public void showResponse_message_expectedFormattedOutput() {
         Ui ui = new Ui();
-        TaskList matches = new TaskList(List.of(new ToDo("read book"), new ToDo("return book")));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream originalOutput = System.out;
 
         try {
             System.setOut(new PrintStream(output));
-            ui.showSearchResults(matches);
+            ui.showResponse("Here are the tasks I found:\n    1. [T] [ ] read book");
         } finally {
             System.setOut(originalOutput);
         }
@@ -33,24 +28,5 @@ public class UiTest {
         String response = output.toString(StandardCharsets.UTF_8);
         assertTrue(response.contains("Here are the tasks I found:"));
         assertTrue(response.contains("1. [T] [ ] read book"));
-        assertTrue(response.contains("2. [T] [ ] return book"));
-    }
-
-    /** Verifies the UI reports when a search has no matching tasks. */
-    @Test
-    public void showSearchResults_noMatches_expectedNoMatchMessage() {
-        Ui ui = new Ui();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        PrintStream originalOutput = System.out;
-
-        try {
-            System.setOut(new PrintStream(output));
-            ui.showSearchResults(new TaskList());
-        } finally {
-            System.setOut(originalOutput);
-        }
-
-        assertTrue(output.toString(StandardCharsets.UTF_8)
-                .contains("You don't have any matching tasks :("));
     }
 }

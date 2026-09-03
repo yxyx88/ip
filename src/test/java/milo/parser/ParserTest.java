@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.Test;
+
 import milo.MiloException;
 import milo.task.Deadline;
 import milo.task.Event;
 import milo.task.Task;
 import milo.task.ToDo;
-
-import org.junit.jupiter.api.Test;
 
 public class ParserTest {
 
@@ -43,20 +43,20 @@ public class ParserTest {
 
     @Test
     public void parseTask_missingTaskParts_expectedHelpfulMessages() {
-        MiloException missingDeadline = assertThrows(MiloException.class,
-                () -> Parser.parseTask("deadline return book"));
+        MiloException missingDeadline = assertThrows(MiloException.class, () ->
+                Parser.parseTask("deadline return book"));
         assertEquals("A deadline without a deadline isn't really a deadline is\n    it...",
                 missingDeadline.getMessage());
 
-        MiloException missingEventRange = assertThrows(MiloException.class,
-                () -> Parser.parseTask("event exam /from 2019-12-02 0900"));
+        MiloException missingEventRange = assertThrows(MiloException.class, () ->
+                Parser.parseTask("event exam /from 2019-12-02 0900"));
         assertEquals("Erm... An even has to start and end...", missingEventRange.getMessage());
     }
 
     @Test
     public void parseTask_invalidCommandFormat_expectedFormatMessage() {
-        MiloException exception = assertThrows(MiloException.class,
-                () -> Parser.parseTask("deadline return book /from 2019-12-02 1800"));
+        MiloException exception = assertThrows(MiloException.class, () ->
+                Parser.parseTask("deadline return book /from 2019-12-02 1800"));
 
         assertEquals("Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm",
                 exception.getMessage());

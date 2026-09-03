@@ -40,9 +40,7 @@ public class DateTimeParserTest {
 
     @Test
     public void parse_invalidDate_expectedParseException() {
-        assertThrows(DateTimeParseException.class,
-                () -> DateTimeParser.parse("2019-02-30 1800"));
-        assertThrows(DateTimeParseException.class,
-                () -> DateTimeParser.parse(""));
+        assertThrows(DateTimeParseException.class, () -> DateTimeParser.parse("2019-02-30 1800"));
+        assertThrows(DateTimeParseException.class, () -> DateTimeParser.parse(""));
     }
 }

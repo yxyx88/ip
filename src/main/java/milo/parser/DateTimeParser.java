@@ -77,7 +77,7 @@ public final class DateTimeParser {
                 ? DISPLAY_DATE.format(dateTime)
                 : DISPLAY_DATE_TIME.format(dateTime);
     }
-    
+
     /**
      * Formats a date/time in the stable representation used by storage.
      *
