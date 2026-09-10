@@ -35,9 +35,7 @@ public class Storage {
             return tasks;
         }
 
-        try {
-            Scanner scanner = new Scanner(file);
-
+        try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNext()) {
                 Task task = Storage.restoreTask(scanner.nextLine());
 
@@ -66,14 +64,12 @@ public class Storage {
                 parentDir.mkdirs();
             }
 
-            FileWriter fw = new FileWriter(file);
-
-            for (Task task : tasks.asList()) {
-                String line = task.storageString();
-                fw.write(line + System.lineSeparator());
+            try (FileWriter fw = new FileWriter(file)) {
+                for (Task task : tasks.asList()) {
+                    String line = task.storageString();
+                    fw.write(line + System.lineSeparator());
+                }
             }
-
-            fw.close();
         } catch (IOException e) {
             throw new MiloException("-O- Oh no! I can't save your tasks!");
         }
