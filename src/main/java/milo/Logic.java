@@ -89,11 +89,7 @@ public class Logic {
 
     /** Returns the numbered task list using the existing wording. */
     private String listTasks() {
-        String message = "Here is your to-do list:";
-        for (int i = 0; i < tasks.size(); i++) {
-            message += String.format("\n    %d. %s", i + 1, tasks.get(i));
-        }
-        return message;
+        return formatTaskList("Here is your to-do list:", tasks);
     }
 
     /** Marks or unmarks the selected task, saves it, and returns its confirmation. */
@@ -143,9 +139,14 @@ public class Logic {
             return "You don't have any matching tasks :(";
         }
 
-        String message = "Here are the tasks I found:";
-        for (int i = 0; i < results.size(); i++) {
-            message += String.format("\n    %d. %s", i + 1, results.get(i));
+        return formatTaskList("Here are the tasks I found:", results);
+    }
+
+    /** Formats a task list with a heading and one-based numbering. */
+    private String formatTaskList(String heading, TaskList taskList) {
+        String message = heading;
+        for (int i = 0; i < taskList.size(); i++) {
+            message += String.format("\n    %d. %s", i + 1, taskList.get(i));
         }
         return message;
     }
