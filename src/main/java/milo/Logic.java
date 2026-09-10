@@ -80,6 +80,8 @@ public class Logic {
     /** Adds a parsed task, saves it, and returns the existing confirmation wording. */
     private String addTask(String input) throws MiloException {
         Task task = Parser.parseTask(input);
+        // Invalid commands throw MiloException; a successful parse must produce a task.
+        assert task != null : "Successful task parsing must return a task";
         tasks.add(task);
         Storage.saveTasks(tasks);
         return String.format("Ok, I've added the following task:\n"
@@ -164,6 +166,8 @@ public class Logic {
         if (index >= tasks.size()) {
             throw new MiloException("You don't even have that many tasks!");
         }
+        // The user-facing checks above must establish a valid zero-based index.
+        assert index >= 0 && index < tasks.size() : "Validated task index must be within the task list";
         return tasks.get(index);
     }
 }
