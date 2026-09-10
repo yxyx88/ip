@@ -34,6 +34,12 @@ public class TaskList {
         return tasks.get(index);
     }
 
+    /** Replaces a task without changing its position or the list size. */
+    public void set(int index, Task task) {
+        assert task != null : "Only non-null tasks may be stored";
+        tasks.set(index, task);
+    }
+
     /** Removes the task at the zero-based index. */
     public void remove(int index) {
         tasks.remove(index);

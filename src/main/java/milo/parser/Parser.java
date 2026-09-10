@@ -126,7 +126,7 @@ public final class Parser {
     }
 
     /** Creates the standard message shown when a task date cannot be parsed. */
-    private static MiloException invalidDateMessage() {
+    protected static MiloException invalidDateMessage() {
         return new MiloException(
                 "I couldn't understand that date. Use yyyy-MM-dd or yyyy-MM-dd HHmm "
                         + "(for example, 2019-10-15 1800), or d/M/yyyy HHmm.");

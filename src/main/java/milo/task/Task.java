@@ -38,6 +38,16 @@ public abstract class Task {
                 .contains(keyword.toLowerCase(Locale.ROOT));
     }
 
+    /** Returns the description without display markers. */
+    public String getDescription() {
+        return description;
+    }
+
+    /** Returns whether this task has been completed. */
+    public boolean isDone() {
+        return isDone;
+    }
+
     /** Returns the common task data used by persistent storage. */
     public String storageString() {
         return String.format("%s | %s", isDone ? "1" : "0", this.description);
