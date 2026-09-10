@@ -25,6 +25,16 @@ public class Event extends Task {
         this.endDate = endDate;
     }
 
+    /** Returns the start date and time. */
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    /** Returns the end date and time. */
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
     /** Returns this event in the format used by storage. */
     @Override
     public String storageString() {

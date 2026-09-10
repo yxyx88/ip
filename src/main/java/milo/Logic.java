@@ -1,6 +1,7 @@
 package milo;
 
 import milo.parser.Parser;
+import milo.parser.RescheduleParser;
 import milo.storage.Storage;
 import milo.task.Task;
 import milo.task.TaskList;
@@ -14,7 +15,6 @@ import milo.task.TaskList;
 public class Logic {
     private final TaskList tasks;
     private final String loadingError;
-
     /** Loads the saved tasks and creates the command handler for them. */
     public Logic() {
         TaskList loadedTasks;
@@ -62,6 +62,8 @@ public class Logic {
                 return deleteTask(input.substring(6));
             } else if (input.startsWith("find")) {
                 return findTasks(input.substring(4));
+            } else if (input.startsWith("reschedule")) {
+                return rescheduleTask(input);
             } else {
                 return addTask(input);
             }
@@ -75,6 +77,30 @@ public class Logic {
     /** Returns whether the input should end the application after its response is shown. */
     public boolean isExitCommand(String input) {
         return input.equals("bye");
+    }
+
+    /** Replaces a dated task only after validation, restoring the original if saving fails. */
+    private String rescheduleTask(String input) throws MiloException {
+        input = input.substring(10);
+        if (input.startsWith(" ")) {
+            input = input.substring(1);
+        }
+        String[] parts = input.split(" ", 2);
+        Task original = getTask(parts[0], "Ermm... What do you want me to reschedule?");
+        if (original.isDone()) {
+            throw new MiloException("You've already completed this task!");
+        }
+        Task updated = RescheduleParser.parse(original, parts.length == 2 ? parts[1] : "");
+        assert updated != null : "Successful rescheduling parsing must return a task";
+        int index = Integer.parseInt(parts[0]) - 1;
+        tasks.set(index, updated);
+        try {
+            Storage.saveTasks(tasks);
+        } catch (MiloException e) {
+            tasks.set(index, original);
+            throw e;
+        }
+        return String.format("Ok! I've rescheduled the following task:\n    %d. %s", index + 1, updated);
     }
 
     /** Adds a parsed task, saves it, and returns the existing confirmation wording. */
