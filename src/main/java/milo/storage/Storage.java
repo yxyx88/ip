@@ -20,6 +20,18 @@ public class Storage {
     // Built with Paths.get so the separator is correct on Windows, macOS, and Linux
     // instead of hardcoding "/".
     private static final String FILE_PATH = Paths.get(".", "data", "milo.txt").toString();
+    // Field positions in a pipe-delimited task record.
+    private static final int TASK_TYPE_INDEX = 0;
+    private static final int STATUS_INDEX = 1;
+    private static final int DESCRIPTION_INDEX = 2;
+    private static final int FIRST_DATE_INDEX = 3;
+    private static final int SECOND_DATE_INDEX = 4;
+    private static final int MINIMUM_TASK_FIELDS = 3;
+    // Task type and completion markers used by the storage format.
+    private static final String TODO_TYPE = "T";
+    private static final String DEADLINE_TYPE = "D";
+    private static final String EVENT_TYPE = "E";
+    private static final String DONE_STATUS = "1";
 
     /**
      * Loads all valid tasks from the data file.
@@ -35,9 +47,7 @@ public class Storage {
             return tasks;
         }
 
-        try {
-            Scanner scanner = new Scanner(file);
-
+        try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNext()) {
                 Task task = Storage.restoreTask(scanner.nextLine());
 
@@ -66,14 +76,12 @@ public class Storage {
                 parentDir.mkdirs();
             }
 
-            FileWriter fw = new FileWriter(file);
-
-            for (Task task : tasks.asList()) {
-                String line = task.storageString();
-                fw.write(line + System.lineSeparator());
+            try (FileWriter fw = new FileWriter(file)) {
+                for (Task task : tasks.asList()) {
+                    String line = task.storageString();
+                    fw.write(line + System.lineSeparator());
+                }
             }
-
-            fw.close();
         } catch (IOException e) {
             throw new MiloException("-O- Oh no! I can't save your tasks!");
         }
@@ -92,23 +100,23 @@ public class Storage {
 
         String[] inputs = input.split("\\s*\\|\\s*");
 
-        if (inputs.length < 3) {
+        if (inputs.length < MINIMUM_TASK_FIELDS) {
             System.out.println("Hmm... That's wierd... There's a corrupted line, I'm just gna skip it.");
             return null;
         }
 
-        String taskType = inputs[0].trim();
-        boolean isDone = inputs[1].trim().equals("1");
-        String description = inputs[2].trim();
+        String taskType = inputs[TASK_TYPE_INDEX].trim();
+        boolean isDone = inputs[STATUS_INDEX].trim().equals(DONE_STATUS);
+        String description = inputs[DESCRIPTION_INDEX].trim();
         Task task;
 
         try {
-            if (taskType.equals("T")) {
+            if (taskType.equals(TODO_TYPE)) {
                 task = new ToDo(description);
-            } else if (taskType.equals("D")) {
-                task = new Deadline(description, inputs[3]);
-            } else if (taskType.equals("E")) {
-                task = new Event(description, inputs[3], inputs[4]);
+            } else if (taskType.equals(DEADLINE_TYPE)) {
+                task = new Deadline(description, inputs[FIRST_DATE_INDEX]);
+            } else if (taskType.equals(EVENT_TYPE)) {
+                task = new Event(description, inputs[FIRST_DATE_INDEX], inputs[SECOND_DATE_INDEX]);
             } else {
                 System.out.println("Hmm... That's wierd... There's an unrecognised task-type, I'm just gna skip it.");
                 return null;

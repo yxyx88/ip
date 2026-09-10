@@ -31,83 +31,98 @@ public final class Parser {
      */
     public static Task parseTask(String s) throws MiloException {
         if (s.startsWith("todo")) {
-            if (s.equals("todo")) {
-                throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
-            }
-
-            String taskDescription = s.substring(4).trim();
-            if (taskDescription.isEmpty()) {
-                throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
-            }
-            return new ToDo(taskDescription);
+            return parseTodo(s);
         }
 
         if (s.startsWith("deadline")) {
-            if (s.equals("deadline")) {
-                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
-            }
-
-            Matcher matcher = DEADLINE_PATTERN.matcher(s);
-            if (!matcher.matches()) {
-                String remainder = s.substring(8).trim();
-                if (remainder.isEmpty()) {
-                    throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
-                }
-                if (!remainder.contains("/")) {
-                    throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
-                }
-                if (!remainder.contains("/by")) {
-                    throw new MiloException(
-                            "Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
-                }
-                throw invalidDateMessage();
-            }
-
-            String taskDescription = matcher.group(1).trim();
-            String date = matcher.group(2).trim();
-            if (taskDescription.isEmpty()) {
-                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
-            }
-            try {
-                return new Deadline(taskDescription, date);
-            } catch (DateTimeParseException e) {
-                throw invalidDateMessage();
-            }
+            return parseDeadline(s);
         }
 
         if (s.startsWith("event")) {
-            if (s.equals("event")) {
-                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
-            }
-
-            Matcher matcher = EVENT_PATTERN.matcher(s);
-            if (!matcher.matches()) {
-                String remainder = s.substring(5).trim();
-                if (remainder.isEmpty()) {
-                    throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
-                }
-                if (!remainder.contains("/from") || !remainder.contains("/to")) {
-                    throw new MiloException("Erm... An even has to start and end...");
-                }
-                throw new MiloException(
-                        "Follow the format for events: event description /from yyyy-MM-dd HHmm "
-                                + "/to yyyy-MM-dd HHmm");
-            }
-
-            String taskDescription = matcher.group(1).trim();
-            String startDate = matcher.group(2).trim();
-            String endDate = matcher.group(3).trim();
-            if (taskDescription.isEmpty()) {
-                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
-            }
-            try {
-                return new Event(taskDescription, startDate, endDate);
-            } catch (DateTimeParseException e) {
-                throw invalidDateMessage();
-            }
+            return parseEvent(s);
         }
 
         throw new MiloException("Erm... I don't know what you mean...");
+    }
+
+    /** Parses a todo command into a task. */
+    private static Task parseTodo(String s) throws MiloException {
+        if (s.equals("todo")) {
+            throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
+        }
+
+        String taskDescription = s.substring(4).trim();
+        if (taskDescription.isEmpty()) {
+            throw new MiloException("An empty todo? What is that for? Doomscrolling?!?");
+        }
+        return new ToDo(taskDescription);
+    }
+
+    /** Parses a deadline command into a task. */
+    private static Task parseDeadline(String s) throws MiloException {
+        if (s.equals("deadline")) {
+            throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+        }
+
+        Matcher matcher = DEADLINE_PATTERN.matcher(s);
+        if (!matcher.matches()) {
+            String remainder = s.substring(8).trim();
+            if (remainder.isEmpty()) {
+                throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+            }
+            if (!remainder.contains("/")) {
+                throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
+            }
+            if (!remainder.contains("/by")) {
+                throw new MiloException(
+                        "Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
+            }
+            throw invalidDateMessage();
+        }
+
+        String taskDescription = matcher.group(1).trim();
+        String date = matcher.group(2).trim();
+        if (taskDescription.isEmpty()) {
+            throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
+        }
+        try {
+            return new Deadline(taskDescription, date);
+        } catch (DateTimeParseException e) {
+            throw invalidDateMessage();
+        }
+    }
+
+    /** Parses an event command into a task. */
+    private static Task parseEvent(String s) throws MiloException {
+        if (s.equals("event")) {
+            throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+        }
+
+        Matcher matcher = EVENT_PATTERN.matcher(s);
+        if (!matcher.matches()) {
+            String remainder = s.substring(5).trim();
+            if (remainder.isEmpty()) {
+                throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+            }
+            if (!remainder.contains("/from") || !remainder.contains("/to")) {
+                throw new MiloException("Erm... An even has to start and end...");
+            }
+            throw new MiloException(
+                    "Follow the format for events: event description /from yyyy-MM-dd HHmm "
+                            + "/to yyyy-MM-dd HHmm");
+        }
+
+        String taskDescription = matcher.group(1).trim();
+        String startDate = matcher.group(2).trim();
+        String endDate = matcher.group(3).trim();
+        if (taskDescription.isEmpty()) {
+            throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
+        }
+        try {
+            return new Event(taskDescription, startDate, endDate);
+        } catch (DateTimeParseException e) {
+            throw invalidDateMessage();
+        }
     }
 
     /** Creates the standard message shown when a task date cannot be parsed. */

@@ -91,11 +91,7 @@ public class Logic {
 
     /** Returns the numbered task list using the existing wording. */
     private String listTasks() {
-        String message = "Here is your to-do list:";
-        for (int i = 0; i < tasks.size(); i++) {
-            message += String.format("\n    %d. %s", i + 1, tasks.get(i));
-        }
-        return message;
+        return formatTaskList("Here is your to-do list:", tasks);
     }
 
     /** Marks or unmarks the selected task, saves it, and returns its confirmation. */
@@ -114,18 +110,18 @@ public class Logic {
 
     /** Deletes a selected task or every task, then returns the existing confirmation. */
     private String deleteTask(String input) throws MiloException {
-        input = input.trim();
-        if (input.isEmpty()) {
+        String trimmedInput = input.trim();
+        if (trimmedInput.isEmpty()) {
             throw new MiloException("Ok, deleting nothing!");
         }
-        if (input.equals("all")) {
+        if (trimmedInput.equals("all")) {
             tasks.clear();
             Storage.saveTasks(tasks);
             return "POOOOOFFF\n    Your to-do list is gone! Sure hope you meant that!";
         }
 
-        Task task = getTask(input, "Ok, deleting nothing!");
-        int index = Integer.parseInt(input) - 1;
+        Task task = getTask(trimmedInput, "Ok, deleting nothing!");
+        int index = Integer.parseInt(trimmedInput) - 1;
         tasks.remove(index);
         Storage.saveTasks(tasks);
         return String.format("Ok, I've removed this task:\n"
@@ -135,31 +131,36 @@ public class Logic {
 
     /** Searches descriptions for a keyword and returns the matching-task message. */
     private String findTasks(String keyword) throws MiloException {
-        keyword = keyword.trim();
-        if (keyword.isEmpty()) {
+        String trimmedKeyword = keyword.trim();
+        if (trimmedKeyword.isEmpty()) {
             throw new MiloException("Hmm... where would this <blank> belong?");
         }
 
-        TaskList results = tasks.find(keyword);
+        TaskList results = tasks.find(trimmedKeyword);
         if (results.size() == 0) {
             return "You don't have any matching tasks :(";
         }
 
-        String message = "Here are the tasks I found:";
-        for (int i = 0; i < results.size(); i++) {
-            message += String.format("\n    %d. %s", i + 1, results.get(i));
+        return formatTaskList("Here are the tasks I found:", results);
+    }
+
+    /** Formats a task list with a heading and one-based numbering. */
+    private String formatTaskList(String heading, TaskList taskList) {
+        String message = heading;
+        for (int i = 0; i < taskList.size(); i++) {
+            message += String.format("\n    %d. %s", i + 1, taskList.get(i));
         }
         return message;
     }
 
     /** Validates a one-based task number and returns its task. */
     private Task getTask(String input, String emptyMessage) throws MiloException {
-        input = input.trim();
-        if (input.isEmpty()) {
+        String trimmedInput = input.trim();
+        if (trimmedInput.isEmpty()) {
             throw new MiloException(emptyMessage);
         }
 
-        int index = Integer.parseInt(input) - 1;
+        int index = Integer.parseInt(trimmedInput) - 1;
         if (index < 0) {
             throw new MiloException("There can't be a negative task number!");
         }
