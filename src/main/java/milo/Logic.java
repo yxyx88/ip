@@ -108,18 +108,18 @@ public class Logic {
 
     /** Deletes a selected task or every task, then returns the existing confirmation. */
     private String deleteTask(String input) throws MiloException {
-        input = input.trim();
-        if (input.isEmpty()) {
+        String trimmedInput = input.trim();
+        if (trimmedInput.isEmpty()) {
             throw new MiloException("Ok, deleting nothing!");
         }
-        if (input.equals("all")) {
+        if (trimmedInput.equals("all")) {
             tasks.clear();
             Storage.saveTasks(tasks);
             return "POOOOOFFF\n    Your to-do list is gone! Sure hope you meant that!";
         }
 
-        Task task = getTask(input, "Ok, deleting nothing!");
-        int index = Integer.parseInt(input) - 1;
+        Task task = getTask(trimmedInput, "Ok, deleting nothing!");
+        int index = Integer.parseInt(trimmedInput) - 1;
         tasks.remove(index);
         Storage.saveTasks(tasks);
         return String.format("Ok, I've removed this task:\n"
@@ -129,12 +129,12 @@ public class Logic {
 
     /** Searches descriptions for a keyword and returns the matching-task message. */
     private String findTasks(String keyword) throws MiloException {
-        keyword = keyword.trim();
-        if (keyword.isEmpty()) {
+        String trimmedKeyword = keyword.trim();
+        if (trimmedKeyword.isEmpty()) {
             throw new MiloException("Hmm... where would this <blank> belong?");
         }
 
-        TaskList results = tasks.find(keyword);
+        TaskList results = tasks.find(trimmedKeyword);
         if (results.size() == 0) {
             return "You don't have any matching tasks :(";
         }
@@ -153,12 +153,12 @@ public class Logic {
 
     /** Validates a one-based task number and returns its task. */
     private Task getTask(String input, String emptyMessage) throws MiloException {
-        input = input.trim();
-        if (input.isEmpty()) {
+        String trimmedInput = input.trim();
+        if (trimmedInput.isEmpty()) {
             throw new MiloException(emptyMessage);
         }
 
-        int index = Integer.parseInt(input) - 1;
+        int index = Integer.parseInt(trimmedInput) - 1;
         if (index < 0) {
             throw new MiloException("There can't be a negative task number!");
         }
