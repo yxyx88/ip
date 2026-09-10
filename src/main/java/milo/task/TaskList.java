@@ -15,11 +15,17 @@ public class TaskList {
 
     /** Creates a task list initialized with a copy of the supplied tasks. */
     public TaskList(List<Task> tasks) {
+        // Callers must supply a collection, using an empty list when there are no tasks.
+        assert tasks != null : "The initial task collection must not be null";
         this.tasks = new ArrayList<>(tasks);
+        // Every entry must support task operations and immutable snapshot creation.
+        assert this.tasks.stream().allMatch(task -> task != null) : "Task lists must not contain null entries";
     }
 
     /** Adds a task to the end of this list. */
     public void add(Task task) {
+        // Preserve the same non-null entry invariant when the collection grows.
+        assert task != null : "Only non-null tasks may be added";
         tasks.add(task);
     }
 
