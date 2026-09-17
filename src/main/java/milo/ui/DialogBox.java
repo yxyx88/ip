@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 /** Represents a chat dialog containing a message and its speaker's avatar. */
 public class DialogBox extends HBox {
@@ -51,11 +52,13 @@ public class DialogBox extends HBox {
         return dialogBox;
     }
 
-    /** Creates a left-aligned dialog for Milo's reply. */
+    /** Creates a left-aligned response card that fills the space beside Milo's avatar. */
     public static DialogBox getMiloDialog(String text, Image image) {
         DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
         dialogBox.getStyleClass().add("milo-dialog");
+        dialogBox.dialog.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(dialogBox.dialog, Priority.ALWAYS);
         return dialogBox;
     }
 }
