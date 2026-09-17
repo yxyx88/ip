@@ -3,6 +3,7 @@ package milo;
 import milo.parser.Parser;
 import milo.parser.RescheduleParser;
 import milo.storage.Storage;
+import milo.task.Deadline;
 import milo.task.Task;
 import milo.task.TaskList;
 
@@ -49,28 +50,39 @@ public class Logic {
 
     /** Processes one complete user command and returns the message that should be displayed. */
     public String execute(String input) {
+        return executeResponse(input).message();
+    }
+
+    /** Processes a command while preserving error status and optional recovery guidance. */
+    public Response executeResponse(String input) {
         try {
-            if (input.equals("bye")) {
-                return "Bye bye. Hope to see you soon!";
-            } else if (input.equals("list")) {
-                return listTasks();
-            } else if (input.startsWith("mark")) {
-                return markTask(input.substring(4), true);
-            } else if (input.startsWith("unmark")) {
-                return markTask(input.substring(6), false);
-            } else if (input.startsWith("delete")) {
-                return deleteTask(input.substring(6));
-            } else if (input.startsWith("find")) {
-                return findTasks(input.substring(4));
-            } else if (input.startsWith("reschedule")) {
-                return rescheduleTask(input);
-            } else {
-                return addTask(input);
-            }
+            return new Response(processCommand(input), false, "");
         } catch (MiloException e) {
-            return e.getMessage();
+            return new Response(e.getMessage(), true, e.getSuggestion());
         } catch (NumberFormatException e) {
-            return "Give me a valid task number!";
+            return new Response("Give me a valid task number!", true,
+                    "Use list to see task numbers, then try a command such as mark 1.");
+        }
+    }
+
+    /** Dispatches a command, allowing failures to reach the response boundary. */
+    private String processCommand(String input) throws MiloException {
+        if (input.equals("bye")) {
+            return "Bye bye. Hope to see you soon!";
+        } else if (input.equals("list")) {
+            return listTasks();
+        } else if (input.startsWith("mark")) {
+            return markTask(input.substring(4), true);
+        } else if (input.startsWith("unmark")) {
+            return markTask(input.substring(6), false);
+        } else if (input.startsWith("delete")) {
+            return deleteTask(input.substring(6));
+        } else if (input.startsWith("find")) {
+            return findTasks(input.substring(4));
+        } else if (input.startsWith("reschedule")) {
+            return rescheduleTask(input);
+        } else {
+            return addTask(input);
         }
     }
 
@@ -90,7 +102,19 @@ public class Logic {
         if (original.isDone()) {
             throw new MiloException("You've already completed this task!");
         }
-        Task updated = RescheduleParser.parse(original, parts.length == 2 ? parts[1] : "");
+        Task updated;
+        try {
+            updated = RescheduleParser.parse(original, parts.length == 2 ? parts[1] : "");
+        } catch (MiloException e) {
+            String suggestion = "Use list to choose a deadline or event to reschedule.";
+            if (original instanceof Deadline) {
+                suggestion = "Try: reschedule " + parts[0] + " /by 2026-10-15 1800";
+            } else if (original instanceof milo.task.Event) {
+                suggestion = "Try: reschedule " + parts[0]
+                        + " /from 2026-10-15 1400 /to 2026-10-15 1600";
+            }
+            throw new MiloException(e.getMessage(), suggestion);
+        }
         assert updated != null : "Successful rescheduling parsing must return a task";
         int index = Integer.parseInt(parts[0]) - 1;
         tasks.set(index, updated);
@@ -159,7 +183,7 @@ public class Logic {
     private String findTasks(String keyword) throws MiloException {
         String trimmedKeyword = keyword.trim();
         if (trimmedKeyword.isEmpty()) {
-            throw new MiloException("Hmm... where would this <blank> belong?");
+            throw new MiloException("Hmm... where would this <blank> belong?", "Try: find book");
         }
 
         TaskList results = tasks.find(trimmedKeyword);
@@ -183,15 +207,15 @@ public class Logic {
     private Task getTask(String input, String emptyMessage) throws MiloException {
         String trimmedInput = input.trim();
         if (trimmedInput.isEmpty()) {
-            throw new MiloException(emptyMessage);
+            throw new MiloException(emptyMessage, "Use list to see task numbers first.");
         }
 
         int index = Integer.parseInt(trimmedInput) - 1;
         if (index < 0) {
-            throw new MiloException("There can't be a negative task number!");
+            throw new MiloException("There can't be a negative task number!", "Use list to see valid task numbers.");
         }
         if (index >= tasks.size()) {
-            throw new MiloException("You don't even have that many tasks!");
+            throw new MiloException("You don't even have that many tasks!", "Use list to see valid task numbers.");
         }
         // The user-facing checks above must establish a valid zero-based index.
         assert index >= 0 && index < tasks.size() : "Validated task index must be within the task list";

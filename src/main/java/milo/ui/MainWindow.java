@@ -1,5 +1,6 @@
 package milo.ui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -8,6 +9,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import milo.Milo;
+import milo.Response;
 
 /** Controller for Milo's main GUI. */
 public class MainWindow extends AnchorPane {
@@ -22,27 +24,48 @@ public class MainWindow extends AnchorPane {
     private final Image userImage = loadImage("/images/User.png");
     private final Image miloImage = loadImage("/images/Milo.png");
 
-    /** Binds the scroll pane to the latest dialog. */
+    /** Focuses the command field after window creation, leaving the scroll position user-controlled. */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        Platform.runLater(userInput::requestFocus);
     }
 
     /** Injects Milo after the FXML view has loaded. */
     public void setMilo(Milo newMilo) {
         milo = newMilo;
-        dialogContainer.getChildren().add(DialogBox.getMiloDialog(milo.getGreeting(), miloImage));
+        Response greeting = milo.getGuiGreeting();
+        dialogContainer.getChildren().add(
+                DialogBox.getMiloDialog(greeting.displayText(), miloImage, greeting.isError()));
     }
 
-    /** Adds the user message and Milo's response to the chat, then clears the text field. */
+    /** Displays nonblank commands, retaining failed input so it can be corrected. */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = formatForDialog(milo.getResponse(input));
+        if (input.isBlank()) {
+            userInput.requestFocus();
+            return;
+        }
+        Response response = milo.getGuiResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getMiloDialog(response, miloImage));
-        userInput.clear();
+                DialogBox.getMiloDialog(formatForDialog(response.displayText()), miloImage, response.isError()));
+        if (!response.isError()) {
+            userInput.clear();
+        }
+        userInput.requestFocus();
+        userInput.positionCaret(userInput.getLength());
+        scrollToLatestReply();
+    }
+
+    /** Reveals a new reply after layout without binding or restricting manual scrolling. */
+    private void scrollToLatestReply() {
+        Platform.runLater(() -> {
+            // Measure wrapped messages before scrolling to the updated bottom of the conversation.
+            scrollPane.applyCss();
+            scrollPane.layout();
+            scrollPane.setVvalue(scrollPane.getVmax());
+        });
     }
 
     /** Removes indentation that was only needed by the legacy console response layout. */

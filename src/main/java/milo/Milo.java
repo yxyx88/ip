@@ -9,6 +9,16 @@ public class Milo {
         return logic.execute(input);
     }
 
+    /** Returns a reply with the status needed to style errors in the GUI. */
+    public Response getGuiResponse(String input) {
+        return logic.executeResponse(input);
+    }
+
+    /** Preserves startup loading failures as errors in the GUI. */
+    public Response getGuiGreeting() {
+        return new Response(getGreeting(), logic.hasLoadingError(), "");
+    }
+
     /** Returns the first reply displayed when the GUI opens. */
     public String getGreeting() {
         if (logic.hasLoadingError()) {

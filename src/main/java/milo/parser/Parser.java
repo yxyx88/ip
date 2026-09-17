@@ -30,19 +30,23 @@ public final class Parser {
      * @throws MiloException if the command is empty, malformed, or has invalid dates
      */
     public static Task parseTask(String s) throws MiloException {
-        if (s.startsWith("todo")) {
-            return parseTodo(s);
+        String example = "Try: todo read book";
+        try {
+            if (s.startsWith("todo")) {
+                return parseTodo(s);
+            }
+            if (s.startsWith("deadline")) {
+                example = "Try: deadline return book /by 2026-10-15 1800";
+                return parseDeadline(s);
+            }
+            if (s.startsWith("event")) {
+                example = "Try: event study /from 2026-10-15 1400 /to 2026-10-15 1600";
+                return parseEvent(s);
+            }
+            throw new MiloException("Erm... I don't know what you mean...");
+        } catch (MiloException e) {
+            throw new MiloException(e.getMessage(), example);
         }
-
-        if (s.startsWith("deadline")) {
-            return parseDeadline(s);
-        }
-
-        if (s.startsWith("event")) {
-            return parseEvent(s);
-        }
-
-        throw new MiloException("Erm... I don't know what you mean...");
     }
 
     /** Parses a todo command into a task. */
@@ -71,7 +75,7 @@ public final class Parser {
                 throw new MiloException("An empty deadline? What is that for? Doomscrolling?!?");
             }
             if (!remainder.contains("/")) {
-                throw new MiloException("A deadline without a deadline isn't really a deadline is\n    it...");
+                throw new MiloException("A deadline without a deadline isn't really a deadline is it...");
             }
             if (!remainder.contains("/by")) {
                 throw new MiloException(
