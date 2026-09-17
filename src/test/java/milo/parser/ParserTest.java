@@ -45,7 +45,7 @@ public class ParserTest {
     public void parseTask_missingTaskParts_expectedHelpfulMessages() {
         MiloException missingDeadline = assertThrows(MiloException.class, () ->
                 Parser.parseTask("deadline return book"));
-        assertEquals("A deadline without a deadline isn't really a deadline is\n    it...",
+        assertEquals("A deadline without a deadline isn't really a deadline is it...",
                 missingDeadline.getMessage());
 
         MiloException missingEventRange = assertThrows(MiloException.class, () ->

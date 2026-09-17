@@ -8,6 +8,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import milo.Milo;
+import milo.Response;
 
 /** Controller for Milo's main GUI. */
 public class MainWindow extends AnchorPane {
@@ -31,17 +32,19 @@ public class MainWindow extends AnchorPane {
     /** Injects Milo after the FXML view has loaded. */
     public void setMilo(Milo newMilo) {
         milo = newMilo;
-        dialogContainer.getChildren().add(DialogBox.getMiloDialog(milo.getGreeting(), miloImage));
+        Response greeting = milo.getGuiGreeting();
+        dialogContainer.getChildren().add(
+                DialogBox.getMiloDialog(greeting.displayText(), miloImage, greeting.isError()));
     }
 
     /** Adds the user message and Milo's response to the chat, then clears the text field. */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = formatForDialog(milo.getResponse(input));
+        Response response = milo.getGuiResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getMiloDialog(response, miloImage));
+                DialogBox.getMiloDialog(formatForDialog(response.displayText()), miloImage, response.isError()));
         userInput.clear();
     }
 

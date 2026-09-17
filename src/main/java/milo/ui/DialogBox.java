@@ -54,9 +54,17 @@ public class DialogBox extends HBox {
 
     /** Creates a left-aligned response card that fills the space beside Milo's avatar. */
     public static DialogBox getMiloDialog(String text, Image image) {
+        return getMiloDialog(text, image, false);
+    }
+
+    /** Creates a response card with distinct styling when command processing failed. */
+    public static DialogBox getMiloDialog(String text, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
         dialogBox.getStyleClass().add("milo-dialog");
+        if (isError) {
+            dialogBox.getStyleClass().add("error-dialog");
+        }
         dialogBox.dialog.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(dialogBox.dialog, Priority.ALWAYS);
         return dialogBox;

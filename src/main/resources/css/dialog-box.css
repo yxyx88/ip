@@ -25,6 +25,12 @@
     -fx-text-fill: #fff7df;
 }
 
+.milo-dialog.error-dialog .label {
+    -fx-background-color: #fde8e7;
+    -fx-border-color: #b3261e;
+    -fx-text-fill: #7a1712;
+}
+
 #displayPicture {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 8, 0.35, 2, 2);
 }
