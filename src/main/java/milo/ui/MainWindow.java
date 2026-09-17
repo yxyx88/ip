@@ -1,5 +1,6 @@
 package milo.ui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -23,10 +24,11 @@ public class MainWindow extends AnchorPane {
     private final Image userImage = loadImage("/images/User.png");
     private final Image miloImage = loadImage("/images/Milo.png");
 
-    /** Binds the scroll pane to the latest dialog. */
+    /** Binds scrolling to the latest dialog and focuses the command field after window creation. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        Platform.runLater(userInput::requestFocus);
     }
 
     /** Injects Milo after the FXML view has loaded. */
@@ -37,15 +39,23 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getMiloDialog(greeting.displayText(), miloImage, greeting.isError()));
     }
 
-    /** Adds the user message and Milo's response to the chat, then clears the text field. */
+    /** Displays nonblank commands, retaining failed input so it can be corrected. */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
+        if (input.isBlank()) {
+            userInput.requestFocus();
+            return;
+        }
         Response response = milo.getGuiResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
                 DialogBox.getMiloDialog(formatForDialog(response.displayText()), miloImage, response.isError()));
-        userInput.clear();
+        if (!response.isError()) {
+            userInput.clear();
+        }
+        userInput.requestFocus();
+        userInput.positionCaret(userInput.getLength());
     }
 
     /** Removes indentation that was only needed by the legacy console response layout. */

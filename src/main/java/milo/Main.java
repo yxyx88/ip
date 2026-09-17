@@ -22,6 +22,9 @@ public class Main extends Application {
             Scene scene = new Scene(anchorPane);
             stage.setTitle("Milo");
             stage.setScene(scene);
+            stage.setResizable(true);
+            stage.setMinWidth(380);
+            stage.setMinHeight(360);
             fxmlLoader.<MainWindow>getController().setMilo(milo);
             stage.show();
         } catch (IOException e) {
