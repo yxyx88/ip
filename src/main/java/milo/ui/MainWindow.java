@@ -24,10 +24,9 @@ public class MainWindow extends AnchorPane {
     private final Image userImage = loadImage("/images/User.png");
     private final Image miloImage = loadImage("/images/Milo.png");
 
-    /** Binds scrolling to the latest dialog and focuses the command field after window creation. */
+    /** Focuses the command field after window creation, leaving the scroll position user-controlled. */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
         Platform.runLater(userInput::requestFocus);
     }
 
@@ -56,6 +55,17 @@ public class MainWindow extends AnchorPane {
         }
         userInput.requestFocus();
         userInput.positionCaret(userInput.getLength());
+        scrollToLatestReply();
+    }
+
+    /** Reveals a new reply after layout without binding or restricting manual scrolling. */
+    private void scrollToLatestReply() {
+        Platform.runLater(() -> {
+            // Measure wrapped messages before scrolling to the updated bottom of the conversation.
+            scrollPane.applyCss();
+            scrollPane.layout();
+            scrollPane.setVvalue(scrollPane.getVmax());
+        });
     }
 
     /** Removes indentation that was only needed by the legacy console response layout. */
