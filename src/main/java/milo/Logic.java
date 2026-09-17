@@ -146,7 +146,7 @@ public class Logic {
 
     /** Marks or unmarks the selected task, saves it, and returns its confirmation. */
     private String markTask(String input, boolean markDone) throws MiloException {
-        Task task = getTask(input, "Am I supposed to read your mind?");
+        Task task = getTask(input, "Which tasks are we tackling? I can't read your mind you know!");
         if (markDone) {
             task.markAsDone();
         } else {
@@ -183,12 +183,12 @@ public class Logic {
     private String findTasks(String keyword) throws MiloException {
         String trimmedKeyword = keyword.trim();
         if (trimmedKeyword.isEmpty()) {
-            throw new MiloException("Hmm... where would this <blank> belong?", "Try: find book");
+            throw new MiloException("Give me a keyword and I'll do the digging!", "Try: find book");
         }
 
         TaskList results = tasks.find(trimmedKeyword);
         if (results.size() == 0) {
-            return "You don't have any matching tasks :(";
+            return "No matches this time! Try a different keyword.";
         }
 
         return formatTaskList("Here are the tasks I found:", results);

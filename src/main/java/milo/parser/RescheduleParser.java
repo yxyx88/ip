@@ -43,10 +43,10 @@ public final class RescheduleParser {
     private static void validateFlag(String[] parts, int index) throws MiloException {
         String flag = parts[index];
         if (!flag.startsWith("/")) {
-            throw new MiloException("Use the proper rescheduling flags!");
+            throw new MiloException("Let's untangle those dates! Use /by for deadlines, or /from and /to for events.");
         }
         if (!flag.equals("/by") && !flag.equals("/from") && !flag.equals("/to")) {
-            throw new MiloException("Use the proper rescheduling flags!");
+            throw new MiloException("Let's untangle those dates! Use /by for deadlines, or /from and /to for events.");
         }
         for (int i = 0; i < index; i += 2) {
             if (parts[i].equals(flag)) {
@@ -69,12 +69,13 @@ public final class RescheduleParser {
             LocalDateTime from, LocalDateTime to) throws MiloException {
         if (original instanceof Deadline) {
             if (by == null || from != null || to != null) {
-                throw new MiloException("Use the proper rescheduling flags!");
+                throw new MiloException("Let's untangle those dates! Use /by for deadlines, "
+                        + "or /from and /to for events.");
             }
             return new Deadline(original.getDescription(), by);
         }
         if (by != null) {
-            throw new MiloException("Use the proper rescheduling flags!");
+            throw new MiloException("Let's untangle those dates! Use /by for deadlines, or /from and /to for events.");
         }
         Event event = (Event) original;
         return new Event(event.getDescription(),

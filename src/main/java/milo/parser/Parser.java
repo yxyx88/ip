@@ -79,7 +79,7 @@ public final class Parser {
             }
             if (!remainder.contains("/by")) {
                 throw new MiloException(
-                        "Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm");
+                        "Let's get that deadline sorted! Use deadline description /by yyyy-MM-dd HHmm.");
             }
             throw invalidDateMessage();
         }
@@ -109,11 +109,11 @@ public final class Parser {
                 throw new MiloException("An empty event? What is that for? Doomscrolling?!?");
             }
             if (!remainder.contains("/from") || !remainder.contains("/to")) {
-                throw new MiloException("Erm... An even has to start and end...");
+                throw new MiloException("Erm... An event has to start and end...");
             }
             throw new MiloException(
-                    "Follow the format for events: event description /from yyyy-MM-dd HHmm "
-                            + "/to yyyy-MM-dd HHmm");
+                    "Let's get that event sorted! Use event description /from yyyy-MM-dd HHmm "
+                            + "/to yyyy-MM-dd HHmm.");
         }
 
         String taskDescription = matcher.group(1).trim();

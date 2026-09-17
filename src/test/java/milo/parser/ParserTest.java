@@ -50,7 +50,7 @@ public class ParserTest {
 
         MiloException missingEventRange = assertThrows(MiloException.class, () ->
                 Parser.parseTask("event exam /from 2019-12-02 0900"));
-        assertEquals("Erm... An even has to start and end...", missingEventRange.getMessage());
+        assertEquals("Erm... An event has to start and end...", missingEventRange.getMessage());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ParserTest {
         MiloException exception = assertThrows(MiloException.class, () ->
                 Parser.parseTask("deadline return book /from 2019-12-02 1800"));
 
-        assertEquals("Follow the format for deadlines: deadline description /by yyyy-MM-dd HHmm",
+        assertEquals("Let's get that deadline sorted! Use deadline description /by yyyy-MM-dd HHmm.",
                 exception.getMessage());
     }
 }

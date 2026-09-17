@@ -30,7 +30,7 @@ public class LogicTest {
     public void execute_invalidCommandsAndExit_expectedMessagesAndExitFlag() {
         Logic logic = new Logic(new TaskList());
 
-        assertEquals("Hmm... where would this <blank> belong?", logic.execute("find"));
+        assertEquals("Give me a keyword and I'll do the digging!", logic.execute("find"));
         assertEquals("Bye bye. Hope to see you soon!", logic.execute("bye"));
         assertTrue(logic.isExitCommand("bye"));
         assertFalse(logic.isExitCommand("list"));

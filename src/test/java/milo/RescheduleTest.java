@@ -100,7 +100,8 @@ public class RescheduleTest {
                 "reschedule 1 2026-09-11", "reschedule 1 /unknown 2026-09-11",
                 "reschedule 1 /from 2026-09-11", "reschedule 1 /to 2026-09-11",
                 "reschedule 2 /by 2026-09-11")) {
-            assertEquals("Use the proper rescheduling flags!", logic.execute(command), command);
+            assertEquals("Let's untangle those dates! Use /by for deadlines, "
+                    + "or /from and /to for events.", logic.execute(command), command);
         }
     }
 
@@ -119,7 +120,8 @@ public class RescheduleTest {
                 logic.execute("reschedule 1 /by 2026-09-11"));
         assertEquals("You've already completed this task!", logic.execute("reschedule 2 /by 2026-09-11"));
         assertEquals("You've already completed this task!", logic.execute("reschedule 3 /to 2026-09-11"));
-        assertEquals("Use the proper rescheduling flags!", logic.execute("reschedule 4 /from 2026-09-11"));
+        assertEquals("Let's untangle those dates! Use /by for deadlines, "
+                + "or /from and /to for events.", logic.execute("reschedule 4 /from 2026-09-11"));
         assertEquals(originals, tasks.asList());
     }
 

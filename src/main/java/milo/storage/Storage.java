@@ -101,7 +101,7 @@ public class Storage {
         String[] inputs = input.split("\\s*\\|\\s*");
 
         if (inputs.length < MINIMUM_TASK_FIELDS) {
-            System.out.println("Hmm... That's wierd... There's a corrupted line, I'm just gna skip it.");
+            System.out.println("Hmm... That's weird... There's a corrupted line, I'm just gna skip it.");
             return null;
         }
 
@@ -118,11 +118,11 @@ public class Storage {
             } else if (taskType.equals(EVENT_TYPE)) {
                 task = new Event(description, inputs[FIRST_DATE_INDEX], inputs[SECOND_DATE_INDEX]);
             } else {
-                System.out.println("Hmm... That's wierd... There's an unrecognised task-type, I'm just gna skip it.");
+                System.out.println("Hmm... That's weird... There's an unrecognised task-type, I'm just gna skip it.");
                 return null;
             }
         } catch (ArrayIndexOutOfBoundsException | DateTimeParseException e) {
-            System.out.println("Hmm... That's wierd... There's a corrupted line, I'm just gna skip it.");
+            System.out.println("Hmm... That's weird... There's a corrupted line, I'm just gna skip it.");
             return null;
         }
 
